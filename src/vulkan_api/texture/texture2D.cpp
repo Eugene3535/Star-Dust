@@ -1,9 +1,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-#include "vulkan_api/utils/tools.h"
-#include "vulkan_api/context/context.h"
-#include "vulkan_api/texture/texture2D.h"
+#include "vulkan_api/utils/tools.hpp"
+#include "vulkan_api/context/context.hpp"
+#include "vulkan_api/texture/texture2D.hpp"
 
 
 static bool create_sampler(Texture2D* texture, VkPhysicalDevice gpu, VkDevice device);
@@ -42,10 +42,10 @@ bool Texture2D_loadFromFile(Texture2D* texture, const char* filepath, const void
             memcpy(data, pixels, imageSize);
             vkUnmapMemory(context->device, stagingBufferMemory);
         }
-        else goto error_create_texture;
+        //else goto error_create_texture;
     }
 
-    VkExtent2D extent = { width, height };
+    const VkExtent2D extent = { width, height };
 
     if(!create_image_2D(
                         extent, 

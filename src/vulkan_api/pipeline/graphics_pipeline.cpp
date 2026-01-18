@@ -2,9 +2,9 @@
 
 #include <cglm/struct/mat4.h>
 
-#include "vulkan_api/utils/tools.h"
-#include "vulkan_api/presentation/main_view.h"
-#include "vulkan_api/pipeline/graphics_pipeline.h"
+#include "vulkan_api/utils/tools.hpp"
+#include "vulkan_api/presentation/main_view.hpp"
+#include "vulkan_api/pipeline/graphics_pipeline.hpp"
 
 
 
@@ -197,8 +197,8 @@ bool GraphicsPipeline_create(GraphicsPipeline* pipeline, const GraphicsPipelineS
         .depthCompareOp        = VK_COMPARE_OP_LESS,
         .depthBoundsTestEnable = VK_FALSE,
         .stencilTestEnable     = VK_FALSE,
-        .front                 = {0},
-        .back                  = {0},
+        .front                 = {},
+        .back                  = {},
         .minDepthBounds        = 0.f,
         .maxDepthBounds        = 1.f
     };

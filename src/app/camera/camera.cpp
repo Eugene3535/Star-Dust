@@ -1,4 +1,4 @@
-#include "app/camera/camera.h"
+#include "app/camera/camera.hpp"
 
 
 // Default camera values
@@ -26,11 +26,11 @@ static void update_camera_vectors(Camera* camera)
 
 void Camera_init(Camera* camera)
 {
-    camera->position = (vec3s){0.f, 0.f,  3.f};
-    camera->front    = (vec3s){0.f, 0.f, -1.f};
-    camera->up       = (vec3s){0.f, 1.f,  0.f};
-    camera->right    = (vec3s){0.f, 0.f,  0.f};
-    camera->worldUp  = (vec3s){0.f, 1.f,  0.f};
+    camera->position = {0.f, 0.f,  3.f};
+    camera->front    = {0.f, 0.f, -1.f};
+    camera->up       = {0.f, 1.f,  0.f};
+    camera->right    = {0.f, 0.f,  0.f};
+    camera->worldUp  = {0.f, 1.f,  0.f};
 
     camera->yaw   = YAW;
     camera->pitch = PITCH;

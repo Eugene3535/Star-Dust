@@ -1,6 +1,6 @@
 #include <vulkan/vulkan.h>
 
-#include "vulkan_api/command_pool/command_buffer_pool.h"
+#include "vulkan_api/command_pool/command_buffer_pool.hpp"
 
 
 bool CommandBufferPool_create(CommandBufferPool* pool, VkDevice device, uint32_t queueFamilyIndex)

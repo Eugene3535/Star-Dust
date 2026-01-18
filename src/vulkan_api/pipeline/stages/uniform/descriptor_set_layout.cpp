@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "vulkan_api/pipeline/stages/uniform/descriptor_set_layout.h"
+#include "vulkan_api/pipeline/stages/uniform/descriptor_set_layout.hpp"
 
 
 void DescriptorSetLayout_addDescriptor(DescriptorSetLayout* layout, VkDescriptorType type, VkShaderStageFlagBits shaderStage)

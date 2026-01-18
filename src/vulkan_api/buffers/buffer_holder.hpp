@@ -1,7 +1,7 @@
 #ifndef BUFFER_HOLDER_H
 #define BUFFER_HOLDER_H
 
-#include "vulkan_api/utils/tools.h"
+#include "vulkan_api/utils/tools.hpp"
 
 
 typedef struct

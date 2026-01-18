@@ -4,7 +4,7 @@
 #include <stdio.h>
 #endif
 
-#include "vulkan_api/context/context.h"
+#include "vulkan_api/context/context.hpp"
 
 
 #ifdef DEBUG
@@ -26,7 +26,7 @@
         VkLayerProperties* availableLayers = (VkLayerProperties*) malloc(sizeof(VkLayerProperties) * layerCount);
 
         if(!availableLayers)
-            return false;
+            return VK_ERROR_LAYER_NOT_PRESENT;
 
         vkEnumerateInstanceLayerProperties(&layerCount, availableLayers);
 
@@ -127,7 +127,7 @@ bool create_instance(VulkanContext* context)
     uint32_t availableExtensionCount;
     vkEnumerateInstanceExtensionProperties(VK_NULL_HANDLE, &availableExtensionCount, VK_NULL_HANDLE);
 
-    VkExtensionProperties* availableExtensions = malloc(availableExtensionCount * sizeof(VkExtensionProperties));
+    VkExtensionProperties* availableExtensions = (VkExtensionProperties*)malloc(availableExtensionCount * sizeof(VkExtensionProperties));
 
     if(!availableExtensions)
         return false;
@@ -224,7 +224,7 @@ bool select_videocard(VulkanContext* context)
 
     if (deviceCount)
     {
-        VkPhysicalDevice* devices = malloc(deviceCount * sizeof(VkPhysicalDevice));
+        VkPhysicalDevice* devices = (VkPhysicalDevice*)malloc(deviceCount * sizeof(VkPhysicalDevice));
 
         if(devices)
         {
@@ -270,7 +270,7 @@ bool create_device(VulkanContext* context)
         uint32_t queueFamilyCount;
         vkGetPhysicalDeviceQueueFamilyProperties(context->GPU, &queueFamilyCount, VK_NULL_HANDLE);
 
-        VkQueueFamilyProperties* queueFamilies = malloc(queueFamilyCount * sizeof(VkQueueFamilyProperties));
+        VkQueueFamilyProperties* queueFamilies = (VkQueueFamilyProperties*)malloc(queueFamilyCount * sizeof(VkQueueFamilyProperties));
         vkGetPhysicalDeviceQueueFamilyProperties(context->GPU, &queueFamilyCount, queueFamilies);
 
         context->mainQueueFamilyIndex = UINT32_MAX;
@@ -311,7 +311,7 @@ bool create_device(VulkanContext* context)
         uint32_t availableExtensionCount;
         vkEnumerateDeviceExtensionProperties(context->GPU, VK_NULL_HANDLE, &availableExtensionCount, VK_NULL_HANDLE);
 
-        VkExtensionProperties* availableExtensions = malloc(availableExtensionCount * sizeof(VkExtensionProperties));
+        VkExtensionProperties* availableExtensions = (VkExtensionProperties*)malloc(availableExtensionCount * sizeof(VkExtensionProperties));
         vkEnumerateDeviceExtensionProperties(context->GPU, VK_NULL_HANDLE, &availableExtensionCount, availableExtensions);
 
         VkResult result = VK_SUCCESS;

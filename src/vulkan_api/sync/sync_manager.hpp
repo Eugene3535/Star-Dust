@@ -6,7 +6,7 @@
 
 #include <vulkan/vulkan.h>
 
-#include "vulkan_api/utils/defines.h"
+#include "vulkan_api/utils/defines.hpp"
 
 
 typedef struct

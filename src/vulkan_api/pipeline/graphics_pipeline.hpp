@@ -1,10 +1,10 @@
 #ifndef GRAPHICS_PIPELINE_H
 #define GRAPHICS_PIPELINE_H
 
-#include "vulkan_api/presentation/main_view.h"
-#include "vulkan_api/pipeline/stages/shader/shader.h"
-#include "vulkan_api/pipeline/stages/vertex/vertex_input_state.h"
-#include "vulkan_api/pipeline/stages/uniform/descriptor_set_layout.h"
+#include "vulkan_api/presentation/main_view.hpp"
+#include "vulkan_api/pipeline/stages/shader/shader.hpp"
+#include "vulkan_api/pipeline/stages/vertex/vertex_input_state.hpp"
+#include "vulkan_api/pipeline/stages/uniform/descriptor_set_layout.hpp"
 
 
 typedef struct

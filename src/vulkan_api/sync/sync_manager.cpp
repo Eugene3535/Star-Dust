@@ -1,4 +1,4 @@
-#include "vulkan_api/sync/sync_manager.h"
+#include "vulkan_api/sync/sync_manager.hpp"
 
 
 bool SyncManager_create(SyncManager* sync, VkDevice device)

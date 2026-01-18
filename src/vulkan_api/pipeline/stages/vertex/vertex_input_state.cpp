@@ -1,4 +1,4 @@
-#include "vulkan_api/pipeline/stages/vertex/vertex_input_state.h"
+#include "vulkan_api/pipeline/stages/vertex/vertex_input_state.hpp"
 
 
 static uint32_t shader_attribute_type_to_component_count(const VertexInputStateAttributeType type);

@@ -5,8 +5,8 @@
 #include <GLFW/glfw3native.h>
 #include <cglm/util.h>
 
-#include "vulkan_api/utils/tools.h"
-#include "vulkan_api/presentation/main_view.h"
+#include "vulkan_api/utils/tools.hpp"
+#include "vulkan_api/presentation/main_view.hpp"
 
 
 
@@ -59,7 +59,7 @@ static SwapChainSupportDetails* query_swapchain_support(MainView* view)
     VkPhysicalDevice gpu = view->context->GPU;
     VkSurfaceKHR surface = view->surface;
 
-    SwapChainSupportDetails* details = calloc(1, sizeof(SwapChainSupportDetails));
+    SwapChainSupportDetails* details = (SwapChainSupportDetails*)calloc(1, sizeof(SwapChainSupportDetails));
     vkGetPhysicalDeviceSurfaceCapabilitiesKHR(gpu, surface, &details->capabilities);
 
     uint32_t formatCount = 0;
@@ -67,7 +67,7 @@ static SwapChainSupportDetails* query_swapchain_support(MainView* view)
 
     if (formatCount) 
     {
-        details->surfaceFormats.data = malloc(formatCount * sizeof(VkSurfaceFormatKHR));
+        details->surfaceFormats.data = (VkSurfaceFormatKHR*)malloc(formatCount * sizeof(VkSurfaceFormatKHR));
         details->surfaceFormats.size = formatCount;
         vkGetPhysicalDeviceSurfaceFormatsKHR(gpu, surface, &formatCount, details->surfaceFormats.data);
     }
@@ -77,7 +77,7 @@ static SwapChainSupportDetails* query_swapchain_support(MainView* view)
 
     if (presentModeCount) 
     {
-        details->presentModes.data = malloc(presentModeCount * sizeof(VkPresentModeKHR));
+        details->presentModes.data = (VkPresentModeKHR*)malloc(presentModeCount * sizeof(VkPresentModeKHR));
         details->presentModes.size = presentModeCount;
         vkGetPhysicalDeviceSurfacePresentModesKHR(gpu, surface, &presentModeCount, details->presentModes.data);
     }
@@ -230,13 +230,13 @@ bool MainView_recreate(MainView* view, bool useDepth)
 
             if(view->images.size == 0)
             {
-                view->images.data = malloc(imageCount * sizeof(VkImage));
+                view->images.data = (VkImage*)malloc(imageCount * sizeof(VkImage));
                 view->images.size = imageCount;
             }
 
             if(view->imageViews.size == 0)
             {
-                view->imageViews.data = malloc(imageCount * sizeof(VkImageView));
+                view->imageViews.data = (VkImageView*)malloc(imageCount * sizeof(VkImageView));
                 view->imageViews.size = imageCount;
             }
 

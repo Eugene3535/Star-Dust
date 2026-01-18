@@ -1,4 +1,4 @@
-#include "vulkan_api/pipeline/descriptors/descriptor_pool.h"
+#include "vulkan_api/pipeline/descriptors/descriptor_pool.hpp"
 
 
 bool DescriptorPool_create(DescriptorPool* pool, const VkDescriptorPoolSize* poolSizes, uint32_t count, VkDevice device)

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.31.10)
 
-project(Star-Dust LANGUAGES C)
+project(Star-Dust LANGUAGES C CXX)
 
 set(BUILD_SHARED_LIBS ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -29,54 +29,7 @@ set(CGLM_USE_TESTS OFF CACHE BOOL "Enable tests" FORCE)
 find_package(Vulkan REQUIRED COMPONENTS glslc)
 find_program(glslc_executable NAMES glslc HINTS Vulkan::glslc)
 
-set(SRC_FILES
-	src/vulkan_api/utils/tools.c
-	src/vulkan_api/context/context.c
-	src/vulkan_api/presentation/main_view.c
-	src/vulkan_api/pipeline/stages/shader/shader.c
-	src/vulkan_api/pipeline/stages/uniform/descriptor_set_layout.c
-	src/vulkan_api/pipeline/stages/vertex/vertex_input_state.c
-	src/vulkan_api/pipeline/descriptors/descriptor_pool.c
-	src/vulkan_api/pipeline/graphics_pipeline.c
-	src/vulkan_api/command_pool/command_buffer_pool.c
-	src/vulkan_api/sync/sync_manager.c
-	src/vulkan_api/texture/texture2D.c
-	src/vulkan_api/buffers/buffer_holder.c
-	src/vulkan_api/render/render.c
-	src/app/camera/camera.c
-	src/app/application.c
-	src/main.c
-)
-
-set(HDR_FILES
-	src/vulkan_api/utils/tools.h
-	src/vulkan_api/context/context.h
-	src/vulkan_api/presentation/main_view.h
-	src/vulkan_api/pipeline/stages/shader/shader.h
-	src/vulkan_api/pipeline/stages/uniform/descriptor_set_layout.h
-	src/vulkan_api/pipeline/stages/vertex/vertex_input_state.h
-	src/vulkan_api/pipeline/descriptors/descriptor_pool.h
-	src/vulkan_api/pipeline/graphics_pipeline.h
-	src/vulkan_api/command_pool/command_buffer_pool.h
-	src/vulkan_api/sync/sync_manager.h
-	src/vulkan_api/texture/texture2D.h
-	src/vulkan_api/buffers/buffer_holder.h
-	src/vulkan_api/render/render.h
-	src/app/camera/camera.h
-	src/app/application.h
-)
-
-set(SHADER_FILES
-	src/shaders/vertex_shader.vert
-	src/shaders/fragment_shader.frag
-)
-
-source_group("shaders" FILES ${SHADER_FILES})
-
-set(ALL_SOURCE_CODE_FILES
-	${SRC_FILES} 
-	${HDR_FILES}
-)
+include("cmake/sources.cmake")
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/shaders)
 include(${CMAKE_SOURCE_DIR}/src/cmake/compile_shaders.cmake)
@@ -111,7 +64,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 	$<$<BOOL:${UNIX}>:GLFW_EXPOSE_NATIVE_X11>
 )
 
-target_compile_features(${PROJECT_NAME} PRIVATE c_std_17)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different "${CMAKE_SOURCE_DIR}/res"     "$<TARGET_FILE_DIR:${PROJECT_NAME}>/res"

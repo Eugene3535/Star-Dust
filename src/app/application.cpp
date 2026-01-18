@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <cglm/struct/affine-pre.h>
 
-#include "vulkan_api/context/context.h"
-#include "vulkan_api/pipeline/graphics_pipeline.h"
-#include "app/application.h"
+#include "vulkan_api/context/context.hpp"
+#include "vulkan_api/pipeline/graphics_pipeline.hpp"
+#include "app/application.hpp"
 
 
 static void framebuffer_size_callback(GLFWwindow* window, int width, int height);

@@ -1,5 +1,5 @@
-#include "vulkan_api/presentation/main_view.h"
-#include "vulkan_api/render/render.h"
+#include "vulkan_api/presentation/main_view.hpp"
+#include "vulkan_api/render/render.hpp"
 
 
 // TODO add clear color value

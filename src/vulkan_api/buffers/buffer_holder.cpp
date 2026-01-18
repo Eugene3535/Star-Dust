@@ -1,5 +1,5 @@
-#include "vulkan_api/context/context.h"
-#include "vulkan_api/buffers/buffer_holder.h"
+#include "vulkan_api/context/context.hpp"
+#include "vulkan_api/buffers/buffer_holder.hpp"
 
 
 Buffer BufferHolder_allocate(BufferHolder* holder, const void* data, uint32_t size, VkBufferUsageFlagBits flag, const void* ctx, VkCommandPool pool)
@@ -51,7 +51,7 @@ Buffer BufferHolder_allocate(BufferHolder* holder, const void* data, uint32_t si
     {
         copy_buffer(stagingBuffer, bufferData.handle, bufferSize, context->device, pool, context->queue);
 
-        BufferData* reallocData = realloc(holder->data, (holder->size + 1) * sizeof(BufferData));
+        BufferData* reallocData = (BufferData*)realloc(holder->data, (holder->size + 1) * sizeof(BufferData));
 
         if(reallocData)
         {

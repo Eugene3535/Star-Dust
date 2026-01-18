@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "vulkan_api/pipeline/stages/shader/shader.h"
+#include "vulkan_api/pipeline/stages/shader/shader.hpp"
 
 // Helper function to read a file into a buffer
 static size_t read_shader_file(const char* filename, char** buffer);

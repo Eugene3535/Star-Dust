@@ -3,14 +3,14 @@
 
 
 
-#include "vulkan_api/pipeline/descriptors/descriptor_pool.h"
-#include "vulkan_api/pipeline/graphics_pipeline.h"
-#include "vulkan_api/command_pool/command_buffer_pool.h"
-#include "vulkan_api/sync/sync_manager.h"
-#include "vulkan_api/texture/texture2D.h"
-#include "vulkan_api/buffers//buffer_holder.h"
-#include "vulkan_api/render/render.h"
-#include "app/camera/camera.h"
+#include "vulkan_api/pipeline/descriptors/descriptor_pool.hpp"
+#include "vulkan_api/pipeline/graphics_pipeline.hpp"
+#include "vulkan_api/command_pool/command_buffer_pool.hpp"
+#include "vulkan_api/sync/sync_manager.hpp"
+#include "vulkan_api/texture/texture2D.hpp"
+#include "vulkan_api/buffers//buffer_holder.hpp"
+#include "vulkan_api/render/render.hpp"
+#include "app/camera/camera.hpp"
 
 
 typedef struct
