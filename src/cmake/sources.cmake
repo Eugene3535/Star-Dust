@@ -1,5 +1,5 @@
 set(SRC_FILES
-	src/vulkan_api/utils/tools.cpp
+	src/vulkan_api/utils/Tools.cpp
 	src/vulkan_api/context/context.cpp
 	src/vulkan_api/presentation/main_view.cpp
 	src/vulkan_api/pipeline/stages/shader/shader.cpp
@@ -18,7 +18,8 @@ set(SRC_FILES
 )
 
 set(HDR_FILES
-	src/vulkan_api/utils/tools.hpp
+	src/vulkan_api/utils/Defines.hpp
+	src/vulkan_api/utils/Tools.hpp
 	src/vulkan_api/context/context.hpp
 	src/vulkan_api/presentation/main_view.hpp
 	src/vulkan_api/pipeline/stages/shader/shader.hpp

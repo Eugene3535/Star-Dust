@@ -10,7 +10,7 @@
 #include "vulkan_api/texture/texture2D.hpp"
 #include "vulkan_api/buffers//buffer_holder.hpp"
 #include "vulkan_api/render/render.hpp"
-#include "app/camera/camera.hpp"
+#include "app/camera/Camera.hpp"
 
 
 typedef struct

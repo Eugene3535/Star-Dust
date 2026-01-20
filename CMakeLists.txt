@@ -29,7 +29,7 @@ set(CGLM_USE_TESTS OFF CACHE BOOL "Enable tests" FORCE)
 find_package(Vulkan REQUIRED COMPONENTS glslc)
 find_program(glslc_executable NAMES glslc HINTS Vulkan::glslc)
 
-include("cmake/sources.cmake")
+include("src/cmake/sources.cmake")
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/shaders)
 include(${CMAKE_SOURCE_DIR}/src/cmake/compile_shaders.cmake)

@@ -141,7 +141,7 @@ void VulkanApp_destroy(VulkanApp* app)
 	GraphicsPipeline_destroy(&app->pipeline, device);
 
 	MainView_destroy(&app->view);
-	VulkanContext_destroy(&app->context);
+	app->context.destroy();
 	
 	glfwDestroyWindow(app->window);
 	glfwTerminate();
@@ -188,7 +188,7 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 
 static bool init_vulkan(VulkanApp* app)
 {
-	if(!VulkanContext_create(&app->context))
+	if(!app->context.create())
 		return false;
 
 	app->view.context = &app->context;
