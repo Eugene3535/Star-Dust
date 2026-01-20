@@ -9,10 +9,10 @@ struct VulkanContext
     bool create()  noexcept;
     void destroy() noexcept;
 
-    VkInstance       instance             = VK_NULL_HANDLE;
-    VkPhysicalDevice GPU                  = VK_NULL_HANDLE;
-    VkDevice         device               = VK_NULL_HANDLE;
-    VkQueue          queue                = VK_NULL_HANDLE;
+    VkInstance       instance             = nullptr;
+    VkPhysicalDevice GPU                  = nullptr;
+    VkDevice         device               = nullptr;
+    VkQueue          queue                = nullptr;
     uint32_t         mainQueueFamilyIndex = 0;
 };
 

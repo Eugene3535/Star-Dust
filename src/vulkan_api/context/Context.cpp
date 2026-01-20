@@ -13,7 +13,7 @@
 #ifdef DEBUG
 namespace
 {
-    const std::array<const char*, 1> validation_layers = 
+    std::array<const char*, 1> validation_layers = 
     {
         "VK_LAYER_KHRONOS_validation"
     };

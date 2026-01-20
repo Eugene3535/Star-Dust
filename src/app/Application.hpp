@@ -1,7 +1,5 @@
-#ifndef APPLICATION_H
-#define APPLICATION_H
-
-
+#ifndef APPLICATION_HPP
+#define APPLICATION_HPP
 
 #include "vulkan_api/pipeline/descriptors/descriptor_pool.hpp"
 #include "vulkan_api/pipeline/graphics_pipeline.hpp"
@@ -10,11 +8,15 @@
 #include "vulkan_api/texture/texture2D.hpp"
 #include "vulkan_api/buffers//buffer_holder.hpp"
 #include "vulkan_api/render/render.hpp"
-#include "app/camera/Camera.hpp"
+#include "app/camera/camera.hpp"
 
 
-typedef struct
+struct VulkanApp
 {
+    bool create(const char* title, int width, int height) noexcept;
+    int  run() noexcept;
+    void destroy() noexcept;
+
     VulkanContext    context;
     MainView         view;
     GraphicsPipeline pipeline;
@@ -39,12 +41,6 @@ typedef struct
     mat4s modelViewProjectionMatrix;
 
     GLFWwindow* window;
-
-} VulkanApp;
-
-
-bool VulkanApp_create(const char* title, int width, int height, VulkanApp* app);
-int  VulkanApp_run(VulkanApp* app);
-void VulkanApp_destroy(VulkanApp* app);
+};
 
 #endif // !APPLICATION_H

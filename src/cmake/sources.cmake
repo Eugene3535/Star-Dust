@@ -1,7 +1,7 @@
 set(SRC_FILES
 	src/vulkan_api/utils/Tools.cpp
-	src/vulkan_api/context/context.cpp
-	src/vulkan_api/presentation/main_view.cpp
+	src/vulkan_api/context/Context.cpp
+	src/vulkan_api/presentation/MainView.cpp
 	src/vulkan_api/pipeline/stages/shader/shader.cpp
 	src/vulkan_api/pipeline/stages/uniform/descriptor_set_layout.cpp
 	src/vulkan_api/pipeline/stages/vertex/vertex_input_state.cpp
@@ -13,15 +13,14 @@ set(SRC_FILES
 	src/vulkan_api/buffers/buffer_holder.cpp
 	src/vulkan_api/render/render.cpp
 	src/app/camera/Camera.cpp
-	src/app/application.cpp
+	src/app/Application.cpp
 	src/main.cpp
 )
 
 set(HDR_FILES
-	src/vulkan_api/utils/Defines.hpp
 	src/vulkan_api/utils/Tools.hpp
-	src/vulkan_api/context/context.hpp
-	src/vulkan_api/presentation/main_view.hpp
+	src/vulkan_api/context/Context.hpp
+	src/vulkan_api/presentation/MainView.hpp
 	src/vulkan_api/pipeline/stages/shader/shader.hpp
 	src/vulkan_api/pipeline/stages/uniform/descriptor_set_layout.hpp
 	src/vulkan_api/pipeline/stages/vertex/vertex_input_state.hpp
@@ -33,7 +32,7 @@ set(HDR_FILES
 	src/vulkan_api/buffers/buffer_holder.hpp
 	src/vulkan_api/render/render.hpp
 	src/app/camera/Camera.hpp
-	src/app/application.hpp
+	src/app/Application.hpp
 )
 
 set(SHADER_FILES

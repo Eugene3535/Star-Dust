@@ -1,9 +1,9 @@
-#include <string.h>
+#include <cstring>
 
 #include <cglm/struct/mat4.h>
 
-#include "vulkan_api/utils/tools.hpp"
-#include "vulkan_api/presentation/main_view.hpp"
+#include "vulkan_api/utils/Tools.hpp"
+#include "vulkan_api/presentation/MainView.hpp"
 #include "vulkan_api/pipeline/graphics_pipeline.hpp"
 
 

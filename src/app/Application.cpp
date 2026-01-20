@@ -6,15 +6,10 @@
 
 #include "vulkan_api/context/context.hpp"
 #include "vulkan_api/pipeline/graphics_pipeline.hpp"
-#include "app/application.hpp"
+#include "app/Application.hpp"
 
-
-static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-static void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
 
 static bool init_vulkan(VulkanApp* app);
-static void recreate_swapchain(VulkanApp* app);
 static void update_uniform_buffer(VulkanApp* app, vec3s position, float angle);
 static void write_command_buffer(VulkanApp* app, VkCommandBuffer cmd, VkDescriptorSet descriptorSet);
 static void draw_frame(VulkanApp* app);
@@ -43,27 +38,51 @@ static const vec3s cubePositions[10] =
 };
 
 
-bool VulkanApp_create(const char* title, int width, int height, VulkanApp* app)
+bool VulkanApp::create(const char* title, int width, int height) noexcept
 {
 	if(glfwInit() == GLFW_TRUE)
 	{
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		GLFWwindow* window = glfwCreateWindow(width, height, title, NULL, NULL);
 
-		if(window)
+		if(window = glfwCreateWindow(width, height, title, nullptr, nullptr))
 		{
-			app->window = window;
-
-			glfwSetWindowUserPointer(window, (void*)app);
+			glfwSetWindowUserPointer(window, this);
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-			glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-			glfwSetKeyCallback(window, key_callback);
-			glfwSetCursorPosCallback(window, mouse_callback);
+			glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height)
+			{
+				if(auto app = static_cast<VulkanApp*>(glfwGetWindowUserPointer(window)))
+				{
+					app->width = width;
+					app->height = height;
+					app->framebufferResized = true;
+				}
+			});
 
-			glfwGetFramebufferSize(window, &app->width, &app->height);
+			glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
+			{
+				if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+					glfwSetWindowShouldClose(window, GLFW_TRUE);
+			});
+
+			glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xposIn, double yposIn)
+			{
+				if(auto app = static_cast<VulkanApp*>(glfwGetWindowUserPointer(window)))
+				{
+					float xpos = (float)xposIn;
+					float ypos = (float)yposIn;
+
+					float xoffset = xpos - lastX;
+					float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+					lastX = xpos;
+					lastY = ypos;
+
+					app->camera.processMouseMovement(xoffset, yoffset);
+				}
+			});
 			
-			return init_vulkan(app);
+			return init_vulkan(this);
 		}
 	}
 
@@ -71,10 +90,9 @@ bool VulkanApp_create(const char* title, int width, int height, VulkanApp* app)
 }
 
 
-int VulkanApp_run(VulkanApp* app)
+int VulkanApp::run() noexcept
 {
-	GLFWwindow* window = app->window;
-	app->modelViewProjectionMatrix = glms_mat4_identity();
+	modelViewProjectionMatrix = glms_mat4_identity();
 
 	float deltaTime = 0.f;
 	float lastFrame = 0.f;
@@ -107,93 +125,57 @@ int VulkanApp_run(VulkanApp* app)
         	glfwSetWindowShouldClose(window, true);
 
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-			app->camera.processKeyboard(Camera::FORWARD, deltaTime);
+			camera.processKeyboard(Camera::FORWARD, deltaTime);
 
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-			app->camera.processKeyboard(Camera::BACKWARD, deltaTime);
+			camera.processKeyboard(Camera::BACKWARD, deltaTime);
 
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-			app->camera.processKeyboard(Camera::LEFT, deltaTime);
+			camera.processKeyboard(Camera::LEFT, deltaTime);
 
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-			app->camera.processKeyboard(Camera::RIGHT, deltaTime);
+			camera.processKeyboard(Camera::RIGHT, deltaTime);
 
-		draw_frame(app);
+		draw_frame(this);
 
 		glfwPollEvents();
 	}
 
-	vkDeviceWaitIdle(app->context.device);
+	vkDeviceWaitIdle(context.device);
 
 	return 0;
 }
 
 
-void VulkanApp_destroy(VulkanApp* app)
+void VulkanApp::destroy() noexcept
 {
-	VkDevice device = app->context.device;
+	VkDevice device = context.device;
 
-	BufferHolder_destroy(&app->bufferHolder, device);
-	Texture2D_destroy(&app->texture, device);
-	SyncManager_destroy(&app->sync, device);
-	CommandBufferPool_destroy(&app->commandPool, device);
-	DescriptorPool_destroy(&app->descriptorPool, device);
-	GraphicsPipeline_destroy(&app->pipeline, device);
+	BufferHolder_destroy(&bufferHolder, device);
+	Texture2D_destroy(&texture, device);
+	SyncManager_destroy(&sync, device);
+	CommandBufferPool_destroy(&commandPool, device);
+	DescriptorPool_destroy(&descriptorPool, device);
+	GraphicsPipeline_destroy(&pipeline, device);
 
-	MainView_destroy(&app->view);
-	app->context.destroy();
+	view.destroy();
+	context.destroy();
 	
-	glfwDestroyWindow(app->window);
+	glfwDestroyWindow(window);
 	glfwTerminate();
 }
 
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+bool init_vulkan(VulkanApp* app)
 {
-	VulkanApp* app = (VulkanApp*)glfwGetWindowUserPointer(window);
+    glfwGetFramebufferSize(app->window, &app->width, &app->height);
 
-	if(app)
-	{
-		app->width = width;
-		app->height = height;
-		app->framebufferResized = true;
-	}
-}
-
-
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
-}
-
-
-void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
-{
-	if(VulkanApp* app = (VulkanApp*)glfwGetWindowUserPointer(window))
-	{
-		float xpos = (float)xposIn;
-		float ypos = (float)yposIn;
-
-		float xoffset = xpos - lastX;
-		float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-
-		lastX = xpos;
-		lastY = ypos;
-
-		app->camera.processMouseMovement(xoffset, yoffset);
-	}
-}
-
-
-static bool init_vulkan(VulkanApp* app)
-{
 	if(!app->context.create())
 		return false;
 
 	app->view.context = &app->context;
 	
-	if(!MainView_createSurface(&app->view, app->window))
+	if(!app->view.create(app->window))
 		return false;
 
 	VkDevice device = app->context.device;
@@ -338,13 +320,6 @@ static bool init_vulkan(VulkanApp* app)
 }
 
 
-void recreate_swapchain(VulkanApp* app)
-{
-    vkDeviceWaitIdle(app->context.device);
-	MainView_recreate(&app->view, true);
-}
-
-
 void update_uniform_buffer(VulkanApp* app, vec3s position, float angle)
 {
 	vec3s axis = { 1.0f, 0.3f, 0.5f };
@@ -392,7 +367,9 @@ void draw_frame(VulkanApp* app)
 
     if (result == VK_ERROR_OUT_OF_DATE_KHR)
     {
-        recreate_swapchain(app);
+        vkDeviceWaitIdle(app->context.device);
+		app->view.recreate(true);
+
         return;
     }
     else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
@@ -483,7 +460,8 @@ void draw_frame(VulkanApp* app)
     if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || app->framebufferResized)
     {
         app->framebufferResized = false;
-        recreate_swapchain(app);
+        vkDeviceWaitIdle(app->context.device);
+		app->view.recreate(true);
     }
     else if (result != VK_SUCCESS)
     {

@@ -1,9 +1,7 @@
 #ifndef RENDER_H
 #define RENDER_H
 
-#include <stdint.h>
-
-#include "vulkan_api/presentation/main_view.hpp"
+#include "vulkan_api/presentation/MainView.hpp"
 
 
 bool render_begin(VkCommandBuffer cmd, const MainView* view, uint32_t imageIndex);

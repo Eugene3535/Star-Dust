@@ -12,14 +12,14 @@ int main()
     const int width = 800;
     const int height = 600;
 
-    VulkanApp app = {0};
+    VulkanApp app = {};
 
-    if(!VulkanApp_create(title, width, height, &app))
+    if(!app.create(title, width, height))
         return 1;
 
-    int retCode = VulkanApp_run(&app);
+    int retCode = app.run();
 
-    VulkanApp_destroy(&app);
+    app.destroy();
 
     return retCode;
 }

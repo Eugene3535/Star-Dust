@@ -3,7 +3,7 @@
 
 #include <vulkan/vulkan.h>
 
-#include <vulkan_api/utils/Defines.hpp>
+#define MAX_FRAMES_IN_FLIGHT 2U
 
 namespace vktools
 {
@@ -24,5 +24,6 @@ namespace vktools
     VkFormat find_depth_format(VkPhysicalDevice gpu) noexcept;
     bool has_stencil_component(VkFormat format) noexcept;
 }
+
 
 #endif // !VULKAN_TOOLS_HPP

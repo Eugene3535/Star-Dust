@@ -1,4 +1,3 @@
-#include "vulkan_api/presentation/main_view.hpp"
 #include "vulkan_api/render/render.hpp"
 
 
@@ -28,7 +27,7 @@ bool render_begin(VkCommandBuffer cmd, const MainView* view, uint32_t imageIndex
         .newLayout           = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
         .srcQueueFamilyIndex = 0,
         .dstQueueFamilyIndex = 0,
-        .image               = view->images.data[imageIndex],
+        .image               = view->images[imageIndex],
         .subresourceRange =     
         {
             .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
@@ -58,7 +57,7 @@ bool render_begin(VkCommandBuffer cmd, const MainView* view, uint32_t imageIndex
     {
         .sType              = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO_KHR,
         .pNext              = VK_NULL_HANDLE,
-        .imageView          = view->imageViews.data[imageIndex],
+        .imageView          = view->imageViews[imageIndex],
         .imageLayout        = VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL_KHR,
         .resolveMode        = VK_RESOLVE_MODE_NONE,
         .resolveImageView   = VK_NULL_HANDLE,
@@ -136,7 +135,7 @@ bool render_end(VkCommandBuffer cmd, const MainView* view, uint32_t imageIndex)
         .newLayout           = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
         .srcQueueFamilyIndex = 0,
         .dstQueueFamilyIndex = 0,
-        .image               = view->images.data[imageIndex],
+        .image               = view->images[imageIndex],
         .subresourceRange =     
         {
             .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,
