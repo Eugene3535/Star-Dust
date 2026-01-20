@@ -1,7 +1,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-#include "vulkan_api/utils/tools.hpp"
+#include "vulkan_api/utils/Tools.hpp"
 #include "vulkan_api/context/context.hpp"
 #include "vulkan_api/texture/texture2D.hpp"
 
@@ -23,13 +23,13 @@ bool Texture2D_loadFromFile(Texture2D* texture, const char* filepath, const void
     VkDeviceSize imageSize = width * height * 4;
 
     VkDeviceMemory stagingBufferMemory;
-    VkBuffer stagingBuffer = create_buffer(
-                                            imageSize, 
-                                            VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
-                                            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
-                                            &stagingBufferMemory, 
-                                            context->device, 
-                                            context->GPU);
+    VkBuffer stagingBuffer = vktools::create_buffer(
+                                                    imageSize, 
+                                                    VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
+                                                    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
+                                                    &stagingBufferMemory, 
+                                                    context->device, 
+                                                    context->GPU);
 
     if(!stagingBuffer)
         return false;
@@ -47,28 +47,28 @@ bool Texture2D_loadFromFile(Texture2D* texture, const char* filepath, const void
 
     const VkExtent2D extent = { width, height };
 
-    if(!create_image_2D(
-                        extent, 
-                        VK_FORMAT_R8G8B8A8_SRGB, 
-                        VK_IMAGE_TILING_OPTIMAL, 
-                        VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, 
-                        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
-                        &texture->image, 
-                        &texture->imageMemory, 
-                        context->GPU, 
-                        context->device))
+    if(!vktools::create_image_2D(
+                                 extent, 
+                                 VK_FORMAT_R8G8B8A8_SRGB, 
+                                 VK_IMAGE_TILING_OPTIMAL, 
+                                 VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, 
+                                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
+                                 &texture->image, 
+                                 &texture->imageMemory, 
+                                 context->GPU, 
+                                 context->device))
         goto error_create_texture;
         
-    if ( ! transition_image_layout(texture->image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, context->device, pool, context->queue) )
+    if ( ! vktools::transition_image_layout(texture->image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, context->device, pool, context->queue) )
         goto error_create_texture;
 
-    if ( ! copy_buffer_to_image(stagingBuffer, texture->image, width, height, context->device, pool, context->queue) )
+    if ( ! vktools::copy_buffer_to_image(stagingBuffer, texture->image, width, height, context->device, pool, context->queue) )
         goto error_create_texture;
 
-    if ( ! transition_image_layout(texture->image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, context->device, pool, context->queue) )
+    if ( ! vktools::transition_image_layout(texture->image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, context->device, pool, context->queue) )
         goto error_create_texture;
 
-    if( ! create_image_view_2D(context->device, texture->image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, &texture->imageView))
+    if( ! vktools::create_image_view_2D(context->device, texture->image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, &texture->imageView))
         goto error_create_texture;
     
     if ( ! create_sampler(texture, context->GPU, context->device))

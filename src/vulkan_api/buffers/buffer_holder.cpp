@@ -17,13 +17,13 @@ Buffer BufferHolder_allocate(BufferHolder* holder, const void* data, uint32_t si
         bufferSize = sizeof(uint32_t) * size;
 
     VkDeviceMemory stagingBufferMemory;
-    VkBuffer stagingBuffer = create_buffer(
-                                            bufferSize, 
-                                            VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                                            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
-                                            &stagingBufferMemory, 
-                                            context->device, 
-                                            context->GPU);
+    VkBuffer stagingBuffer = vktools::create_buffer(
+                                                    bufferSize, 
+                                                    VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                                                    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
+                                                    &stagingBufferMemory, 
+                                                    context->device, 
+                                                    context->GPU);
 
     if(!stagingBuffer)
         return result;
@@ -39,17 +39,17 @@ Buffer BufferHolder_allocate(BufferHolder* holder, const void* data, uint32_t si
         else goto error_create_buffer;
     }
 
-    bufferData.handle = create_buffer(
-                                        bufferSize, 
-                                        VK_BUFFER_USAGE_TRANSFER_DST_BIT | flag, 
-                                        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
-                                        &bufferData.memory, 
-                                        context->device, 
-                                        context->GPU);
+    bufferData.handle = vktools::create_buffer(
+                                               bufferSize, 
+                                               VK_BUFFER_USAGE_TRANSFER_DST_BIT | flag, 
+                                               VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
+                                               &bufferData.memory, 
+                                               context->device, 
+                                               context->GPU);
 
     if(bufferData.handle)
     {
-        copy_buffer(stagingBuffer, bufferData.handle, bufferSize, context->device, pool, context->queue);
+        vktools::copy_buffer(stagingBuffer, bufferData.handle, bufferSize, context->device, pool, context->queue);
 
         BufferData* reallocData = (BufferData*)realloc(holder->data, (holder->size + 1) * sizeof(BufferData));
 

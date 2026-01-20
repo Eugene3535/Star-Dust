@@ -109,23 +109,23 @@ static bool create_depth_resources(MainView* view)
 {
     bool result = false;
     VkDevice device = view->context->device;
-    VkFormat depthFormat = find_depth_format(view->context->GPU);
+    VkFormat depthFormat = vktools::find_depth_format(view->context->GPU);
 
     if(depthFormat != VK_FORMAT_UNDEFINED)
     {
-        result = create_image_2D(
-            view->extent, 
-            depthFormat, 
-            VK_IMAGE_TILING_OPTIMAL, 
-            VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 
-            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
-            &view->depthImage, 
-            &view->depthImageMemory, 
-            view->context->GPU, 
-            device);
+        result = vktools::create_image_2D(
+                                          view->extent, 
+                                          depthFormat, 
+                                          VK_IMAGE_TILING_OPTIMAL, 
+                                          VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 
+                                          VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
+                                          &view->depthImage, 
+                                          &view->depthImageMemory, 
+                                          view->context->GPU, 
+                                          device);
 
         if(result)
-            return create_image_view_2D(device, view->depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, &view->depthImageView);
+            return vktools::create_image_view_2D(device, view->depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, &view->depthImageView);
     }
 
     return result;
@@ -244,7 +244,7 @@ bool MainView_recreate(MainView* view, bool useDepth)
             {
                 for (uint32_t i = 0; i < view->imageViews.size; ++i)
                 {
-                    if (!create_image_view_2D(device, view->images.data[i], view->format, VK_IMAGE_ASPECT_COLOR_BIT, &view->imageViews.data[i]))
+                    if (!vktools::create_image_view_2D(device, view->images.data[i], view->format, VK_IMAGE_ASPECT_COLOR_BIT, &view->imageViews.data[i]))
                         result = false;  
                 }
 

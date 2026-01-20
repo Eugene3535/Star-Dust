@@ -1,7 +1,9 @@
 #include "vulkan_api/utils/tools.hpp"
 
+namespace vktools
+{
 
-uint32_t find_memory_type(uint32_t typeFilter, VkMemoryPropertyFlags properties, VkPhysicalDevice gpu)
+uint32_t find_memory_type(uint32_t typeFilter, VkMemoryPropertyFlags properties, VkPhysicalDevice gpu) noexcept
 {
     VkPhysicalDeviceMemoryProperties memProperties;
     vkGetPhysicalDeviceMemoryProperties(gpu, &memProperties);
@@ -18,7 +20,7 @@ uint32_t find_memory_type(uint32_t typeFilter, VkMemoryPropertyFlags properties,
 }
 
 
-VkCommandBuffer begin_single_time_commands(VkDevice device, VkCommandPool pool)
+VkCommandBuffer begin_single_time_commands(VkDevice device, VkCommandPool pool) noexcept
 {
     const VkCommandBufferAllocateInfo allocInfo = 
     {
@@ -51,7 +53,7 @@ VkCommandBuffer begin_single_time_commands(VkDevice device, VkCommandPool pool)
 }
 
 
-void end_single_time_commands(VkCommandBuffer cmd, VkDevice device, VkCommandPool pool, VkQueue queue)
+void end_single_time_commands(VkCommandBuffer cmd, VkDevice device, VkCommandPool pool, VkQueue queue) noexcept
 {
     vkEndCommandBuffer(cmd);
 
@@ -74,7 +76,7 @@ void end_single_time_commands(VkCommandBuffer cmd, VkDevice device, VkCommandPoo
 }
 
 
-VkBuffer create_buffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkDeviceMemory* bufferMemory, VkDevice device, VkPhysicalDevice gpu)
+VkBuffer create_buffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkDeviceMemory* bufferMemory, VkDevice device, VkPhysicalDevice gpu) noexcept
 {
     const VkBufferCreateInfo bufferInfo = 
     {
@@ -123,7 +125,7 @@ VkBuffer create_buffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryProp
 }
 
 
-void copy_buffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkDevice device, VkCommandPool pool, VkQueue queue)
+void copy_buffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkDevice device, VkCommandPool pool, VkQueue queue) noexcept
 {
     VkCommandBuffer cmd = begin_single_time_commands(device, pool);
 
@@ -142,7 +144,7 @@ void copy_buffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkDe
 }
 
 
-bool transition_image_layout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, VkDevice device, VkCommandPool pool, VkQueue queue)
+bool transition_image_layout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, VkDevice device, VkCommandPool pool, VkQueue queue) noexcept
 {
     VkCommandBuffer cmd = begin_single_time_commands(device, pool);
 
@@ -220,7 +222,7 @@ bool transition_image_layout(VkImage image, VkFormat format, VkImageLayout oldLa
 }
 
 
-bool copy_buffer_to_image(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, VkDevice device, VkCommandPool pool, VkQueue queue)
+bool copy_buffer_to_image(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, VkDevice device, VkCommandPool pool, VkQueue queue) noexcept
 {
     VkCommandBuffer cmd = begin_single_time_commands(device, pool);
 
@@ -271,7 +273,7 @@ bool create_image_2D(
                     VkImage* image, 
                     VkDeviceMemory* imageMemory, 
                     VkPhysicalDevice gpu, 
-                    VkDevice device)
+                    VkDevice device) noexcept
 {
     bool result = false;
 
@@ -324,7 +326,7 @@ bool create_image_2D(
 }
 
 
-bool create_image_view_2D(VkDevice device, VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, VkImageView* imageView)
+bool create_image_view_2D(VkDevice device, VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, VkImageView* imageView) noexcept
 {
     const VkImageViewCreateInfo viewInfo = 
     {
@@ -355,7 +357,7 @@ bool create_image_view_2D(VkDevice device, VkImage image, VkFormat format, VkIma
 }
 
 
-VkFormat find_supported_format(const VkFormat* formats, uint32_t count, VkImageTiling tiling, VkFormatFeatureFlags features, VkPhysicalDevice gpu)
+VkFormat find_supported_format(const VkFormat* formats, uint32_t count, VkImageTiling tiling, VkFormatFeatureFlags features, VkPhysicalDevice gpu) noexcept
 {
     for (uint32_t i = 0; i < count; ++i)
     {
@@ -376,7 +378,7 @@ VkFormat find_supported_format(const VkFormat* formats, uint32_t count, VkImageT
 }
 
 
-VkFormat find_depth_format(VkPhysicalDevice gpu)
+VkFormat find_depth_format(VkPhysicalDevice gpu) noexcept
 {
     const VkFormat formats[] = { VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT };
 
@@ -384,7 +386,9 @@ VkFormat find_depth_format(VkPhysicalDevice gpu)
 }
 
 
-bool has_stencil_component(VkFormat format)
+bool has_stencil_component(VkFormat format) noexcept
 {
     return ( (format == VK_FORMAT_D32_SFLOAT_S8_UINT) || (format == VK_FORMAT_D24_UNORM_S8_UINT) );
+}
+
 }

@@ -120,7 +120,7 @@ bool GraphicsPipeline_create(GraphicsPipeline* pipeline, const GraphicsPipelineS
     GraphicsPipeline_destroy(pipeline, device); // for recreate case
 
     const VkFormat colorFormat = view->format;
-    const VkFormat depthFormat = find_depth_format(GPU);
+    const VkFormat depthFormat = vktools::find_depth_format(GPU);
 
     const VkPipelineVertexInputStateCreateInfo vertexInput = VertexInputState_getInfo(&state->vertexInputState);
 
