@@ -12,7 +12,7 @@ set(SRC_FILES
 	src/vulkan_api/texture/texture2D.cpp
 	src/vulkan_api/buffers/buffer_holder.cpp
 	src/vulkan_api/render/render.cpp
-	src/app/camera/camera.cpp
+	src/app/camera/Camera.cpp
 	src/app/application.cpp
 	src/main.cpp
 )
@@ -31,7 +31,7 @@ set(HDR_FILES
 	src/vulkan_api/texture/texture2D.hpp
 	src/vulkan_api/buffers/buffer_holder.hpp
 	src/vulkan_api/render/render.hpp
-	src/app/camera/camera.hpp
+	src/app/camera/Camera.hpp
 	src/app/application.hpp
 )
 

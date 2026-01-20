@@ -64,7 +64,14 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 	$<$<BOOL:${UNIX}>:GLFW_EXPOSE_NATIVE_X11>
 )
 
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
+if(MSVC)
+    target_compile_options(${PROJECT_NAME} PRIVATE /GR-)
+else()
+    target_compile_options(${PROJECT_NAME} PRIVATE -fno-rtti)  
+endif()
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:DEBUG> CGLM_USE_ANONYMOUS_STRUCT)
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different "${CMAKE_SOURCE_DIR}/res"     "$<TARGET_FILE_DIR:${PROJECT_NAME}>/res"

@@ -74,10 +74,7 @@ bool VulkanApp_create(const char* title, int width, int height, VulkanApp* app)
 int VulkanApp_run(VulkanApp* app)
 {
 	GLFWwindow* window = app->window;
-	Camera* camera = &app->camera;
-
 	app->modelViewProjectionMatrix = glms_mat4_identity();
-	Camera_init(camera);
 
 	float deltaTime = 0.f;
 	float lastFrame = 0.f;
@@ -110,16 +107,16 @@ int VulkanApp_run(VulkanApp* app)
         	glfwSetWindowShouldClose(window, true);
 
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-			Camera_processKeyboard(camera, FORWARD, deltaTime);
+			app->camera.processKeyboard(Camera::FORWARD, deltaTime);
 
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-			Camera_processKeyboard(camera, BACKWARD, deltaTime);
+			app->camera.processKeyboard(Camera::BACKWARD, deltaTime);
 
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-			Camera_processKeyboard(camera, LEFT, deltaTime);
+			app->camera.processKeyboard(Camera::LEFT, deltaTime);
 
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-			Camera_processKeyboard(camera, RIGHT, deltaTime);
+			app->camera.processKeyboard(Camera::RIGHT, deltaTime);
 
 		draw_frame(app);
 
@@ -173,9 +170,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 {
-	VulkanApp* app = (VulkanApp*)glfwGetWindowUserPointer(window);
-
-	if(app)
+	if(VulkanApp* app = (VulkanApp*)glfwGetWindowUserPointer(window))
 	{
 		float xpos = (float)xposIn;
 		float ypos = (float)yposIn;
@@ -186,7 +181,7 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 		lastX = xpos;
 		lastY = ypos;
 
-		Camera_processMouseMovement(&app->camera, xoffset, yoffset);
+		app->camera.processMouseMovement(xoffset, yoffset);
 	}
 }
 
@@ -356,7 +351,7 @@ void update_uniform_buffer(VulkanApp* app, vec3s position, float angle)
 
     mat4s model = glms_translate(glms_mat4_identity(), position);
     model       = glms_rotate(model, glm_rad(angle), axis);
-    mat4s modelView  = Camera_getViewMatrix(&app->camera);
+    mat4s modelView  = app->camera.getViewMatrix();
     mat4s projection = glms_perspective(glm_rad(60.f), app->width / (float)app->height, 0.1f, 100.f);
     projection.col[1].y *= -1;
 

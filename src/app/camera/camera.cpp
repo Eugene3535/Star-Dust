@@ -1,4 +1,4 @@
-#include "app/camera/camera.hpp"
+#include "app/camera/Camera.hpp"
 
 
 // Default camera values
@@ -24,34 +24,34 @@ static void update_camera_vectors(Camera* camera)
 
 
 
-void Camera_init(Camera* camera)
+Camera::Camera() noexcept
 {
-    camera->position = {0.f, 0.f,  3.f};
-    camera->front    = {0.f, 0.f, -1.f};
-    camera->up       = {0.f, 1.f,  0.f};
-    camera->right    = {0.f, 0.f,  0.f};
-    camera->worldUp  = {0.f, 1.f,  0.f};
+    position = {0.f, 0.f,  3.f};
+    front    = {0.f, 0.f, -1.f};
+    up       = {0.f, 1.f,  0.f};
+    right    = {0.f, 0.f,  0.f};
+    worldUp  = {0.f, 1.f,  0.f};
 
-    camera->yaw   = YAW;
-    camera->pitch = PITCH;
+    yaw   = YAW;
+    pitch = PITCH;
 
-    camera->movementSpeed    = SPEED; 
-    camera->mouseSensitivity = SENSITIVITY; 
+    movementSpeed    = SPEED; 
+    mouseSensitivity = SENSITIVITY; 
 
-    update_camera_vectors(camera);
+    update_camera_vectors(this);
 }
 
 
-void Camera_processKeyboard(Camera* camera, CameraMovement direction, float deltaTime)
+void Camera::processKeyboard(Camera::Direction direction, float deltaTime) noexcept
 {
-    float velocity = camera->movementSpeed * deltaTime;
+    float velocity = movementSpeed * deltaTime;
 
     switch (direction)
     {
-        case FORWARD:  glm_vec3_muladds(camera->front.raw, velocity, camera->position.raw); break;
-        case BACKWARD: glm_vec3_mulsubs(camera->front.raw, velocity, camera->position.raw); break;
-        case LEFT:     glm_vec3_mulsubs(camera->right.raw, velocity, camera->position.raw); break;
-        case RIGHT:    glm_vec3_muladds(camera->right.raw, velocity, camera->position.raw); break;
+        case Camera::FORWARD:  glm_vec3_muladds(front.raw, velocity, position.raw); break;
+        case Camera::BACKWARD: glm_vec3_mulsubs(front.raw, velocity, position.raw); break;
+        case Camera::LEFT:     glm_vec3_mulsubs(right.raw, velocity, position.raw); break;
+        case Camera::RIGHT:    glm_vec3_muladds(right.raw, velocity, position.raw); break;
         
         default:
             break;
@@ -59,29 +59,29 @@ void Camera_processKeyboard(Camera* camera, CameraMovement direction, float delt
 }
 
 
-void Camera_processMouseMovement(Camera* camera, float xoffset, float yoffset)
+void Camera::processMouseMovement(float xoffset, float yoffset) noexcept
 {
-    xoffset *= camera->mouseSensitivity;
-    yoffset *= camera->mouseSensitivity;
+    xoffset *= mouseSensitivity;
+    yoffset *= mouseSensitivity;
 
-    camera->yaw   += xoffset;
-    camera->pitch += yoffset;
+    yaw   += xoffset;
+    pitch += yoffset;
 
 //  make sure that when pitch is out of bounds, screen doesn't get flipped
-    if (camera->pitch > 89.f)
-        camera->pitch = 89.f;
+    if (pitch > 89.f)
+        pitch = 89.f;
 
-    if (camera->pitch < -89.f)
-        camera->pitch = -89.f;
+    if (pitch < -89.f)
+        pitch = -89.f;
 
 //  update Front, Right and Up Vectors using the updated Euler angles
-    update_camera_vectors(camera);
+    update_camera_vectors(this);
 }
 
 
-mat4s Camera_getViewMatrix(Camera* camera)
+mat4s Camera::getViewMatrix() noexcept
 {
-    vec3s center = glms_vec3_add(camera->position, camera->front);
+    vec3s center = glms_vec3_add(position, front);
 
-    return glms_lookat(camera->position, center, camera->up);
+    return glms_lookat(position, center, up);
 }
