@@ -155,7 +155,7 @@ void VulkanApp::destroy() noexcept
 	Texture2D_destroy(&texture, device);
 	SyncManager_destroy(&sync, device);
 	CommandBufferPool_destroy(&commandPool, device);
-	DescriptorPool_destroy(&descriptorPool, device);
+	descriptorPool.destroy(device);
 	pipeline.destroy(device);
 
 	view.destroy();
@@ -199,7 +199,6 @@ bool init_vulkan(VulkanApp* app) noexcept
         uniformDescriptors.addDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
 
         GraphicsPipeline::State pipelineState;
-
         pipelineState.setupShaderStages(shaders, attributes);
         pipelineState.setupInputAssembler(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
         pipelineState.setupViewport();
@@ -218,13 +217,16 @@ bool init_vulkan(VulkanApp* app) noexcept
 	}
 
 	{// Descriptors
-		VkDescriptorPoolSize poolSizes = 
+		std::array<VkDescriptorPoolSize, 1> poolSizes = 
 		{
-			.type            = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			.descriptorCount = MAX_FRAMES_IN_FLIGHT
+			VkDescriptorPoolSize
+			{
+				.type            = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+				.descriptorCount = MAX_FRAMES_IN_FLIGHT
+			}
 		};
 
-		if(!DescriptorPool_create(&app->descriptorPool, &poolSizes, 1, device))
+		if(!app->descriptorPool.create(poolSizes, device))
 			return false;
 
 		VkDescriptorSetLayout layouts[MAX_FRAMES_IN_FLIGHT] = 
@@ -233,7 +235,7 @@ bool init_vulkan(VulkanApp* app) noexcept
 			app->pipeline.descriptorSetLayout 
 		};
 
-		if(!DescriptorPool_allocateDescriptorSets(&app->descriptorPool, app->descriptorSets, layouts, device))
+		if(!app->descriptorPool.allocateDescriptorSets(app->descriptorSets, layouts, device))
 			return false;	
 	}
 
@@ -254,8 +256,8 @@ bool init_vulkan(VulkanApp* app) noexcept
             .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
         };
 
-		DescriptorPool_writeCombinedImageSampler(&app->descriptorPool, &imageInfo, app->descriptorSets[0], 0, device);
-		DescriptorPool_writeCombinedImageSampler(&app->descriptorPool, &imageInfo, app->descriptorSets[1], 0, device);
+		app->descriptorPool.writeCombinedImageSampler(&imageInfo, app->descriptorSets[0], 0, device);
+		app->descriptorPool.writeCombinedImageSampler(&imageInfo, app->descriptorSets[1], 0, device);
     }
 
 	{

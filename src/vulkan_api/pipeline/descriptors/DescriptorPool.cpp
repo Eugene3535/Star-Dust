@@ -1,7 +1,7 @@
-#include "vulkan_api/pipeline/descriptors/descriptor_pool.hpp"
+#include "vulkan_api/pipeline/descriptors/DescriptorPool.hpp"
 
 
-bool DescriptorPool_create(DescriptorPool* pool, const VkDescriptorPoolSize* poolSizes, uint32_t count, VkDevice device)
+bool DescriptorPool::create(std::span<const VkDescriptorPoolSize> poolSizes, VkDevice device) noexcept
 {
     const VkDescriptorPoolCreateInfo poolInfo = 
     {
@@ -9,41 +9,33 @@ bool DescriptorPool_create(DescriptorPool* pool, const VkDescriptorPoolSize* poo
         .pNext         = VK_NULL_HANDLE,
         .flags         = 0,
         .maxSets       = MAX_FRAMES_IN_FLIGHT,
-        .poolSizeCount = count,
-        .pPoolSizes    = poolSizes
+        .poolSizeCount = static_cast<uint32_t>(poolSizes.size()),
+        .pPoolSizes    = poolSizes.data()
     };
 
-    bool result = (vkCreateDescriptorPool(device, &poolInfo, VK_NULL_HANDLE, &pool->handle) == VK_SUCCESS);
+    bool result = (vkCreateDescriptorPool(device, &poolInfo, VK_NULL_HANDLE, &handle) == VK_SUCCESS);
 
     if(result)
     {
-        pool->types.data = (VkDescriptorType*)malloc(count * sizeof(VkDescriptorType));
+        types.resize(poolSizes.size());
 
-        if(pool->types.data)
-        {
-            pool->types.size = count;
+        for (uint32_t i = 0; i < poolSizes.size(); ++i)
+            types[i] = poolSizes[i].type;
 
-            for (uint32_t i = 0; i < count; ++i)
-                pool->types.data[i] = poolSizes[i].type;
-
-            return true;
-        }
-
-        free(pool->types.data);
-        pool->types.data = VK_NULL_HANDLE;
+        return true;
     }
 
     return false;
 }
 
 
-bool DescriptorPool_allocateDescriptorSets(DescriptorPool* pool, VkDescriptorSet* descriptorSets, const VkDescriptorSetLayout* layouts, VkDevice device)
+bool DescriptorPool::allocateDescriptorSets(VkDescriptorSet* descriptorSets, const VkDescriptorSetLayout* layouts, VkDevice device) noexcept
 {
     const VkDescriptorSetAllocateInfo allocateInfo = 
     {
         .sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
         .pNext              = VK_NULL_HANDLE,
-        .descriptorPool     = pool->handle,
+        .descriptorPool     = handle,
         .descriptorSetCount = MAX_FRAMES_IN_FLIGHT,
         .pSetLayouts        = layouts
     };
@@ -52,7 +44,7 @@ bool DescriptorPool_allocateDescriptorSets(DescriptorPool* pool, VkDescriptorSet
 }
 
 
-void DescriptorPool_writeCombinedImageSampler(DescriptorPool* pool, const VkDescriptorImageInfo* imageInfo, VkDescriptorSet descriptorSet, uint32_t dstBinding, VkDevice device)
+void DescriptorPool::writeCombinedImageSampler(const VkDescriptorImageInfo* imageInfo, VkDescriptorSet descriptorSet, uint32_t dstBinding, VkDevice device) noexcept
 {
     const VkWriteDescriptorSet descriptorWrite = 
     {
@@ -72,8 +64,7 @@ void DescriptorPool_writeCombinedImageSampler(DescriptorPool* pool, const VkDesc
 }
 
 
-void DescriptorPool_destroy(DescriptorPool* pool, VkDevice device)
+void DescriptorPool::destroy(VkDevice device) noexcept
 {
-    vkDestroyDescriptorPool(device, pool->handle, VK_NULL_HANDLE);
-    free(pool->types.data);
+    vkDestroyDescriptorPool(device, handle, VK_NULL_HANDLE);
 }

@@ -1,7 +1,7 @@
 #ifndef APPLICATION_HPP
 #define APPLICATION_HPP
 
-#include "vulkan_api/pipeline/descriptors/descriptor_pool.hpp"
+#include "vulkan_api/pipeline/descriptors/DescriptorPool.hpp"
 #include "vulkan_api/pipeline/GraphicsPipeline.hpp"
 #include "vulkan_api/command_pool/command_buffer_pool.hpp"
 #include "vulkan_api/sync/sync_manager.hpp"
