@@ -1,40 +1,43 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
-#include "vulkan_api/pipeline/stages/shader/shader.hpp"
+#include "vulkan_api/pipeline/stages/shader/Shader.hpp"
+
 
 // Helper function to read a file into a buffer
-static size_t read_shader_file(const char* filename, char** buffer);
+static size_t read_shader_file(const char* filename, char** buffer) noexcept;
 
 // Function to create a shader module from SPIR-V data
-static VkShaderModule create_shader_module(VkDevice device, const char* filename);
+static VkShaderModule create_shader_module(VkDevice device, const char* filename) noexcept;
 
 
-Shader Shader_loadFromFile(VkDevice device, VkShaderStageFlagBits stage, const char* filepath)
+Shader::Shader(const std::filesystem::path& filePath, VkShaderStageFlagBits stage, VkDevice device) noexcept:
+    m_module(VK_NULL_HANDLE),
+    m_stage(stage),
+    m_device(device)
 {
-    Shader shader = {0};
-    VkShaderModule shaderModule = create_shader_module(device, filepath);
-
-    if(shaderModule)
-    {
-        shader.module = shaderModule;
-        shader.stage = stage;
-    }
-
-    return shader;
+    if(auto shaderModule = create_shader_module(device, filePath.string().c_str()))
+        m_module = shaderModule;
 }
 
 
-VkPipelineShaderStageCreateInfo Shader_getInfo(Shader shader)
+Shader::~Shader()
+{
+    if(m_module)
+        vkDestroyShaderModule(m_device, m_module, VK_NULL_HANDLE);
+}
+
+
+VkPipelineShaderStageCreateInfo Shader::getInfo() const noexcept
 {
     const VkPipelineShaderStageCreateInfo info =
     {
         .sType               = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
         .pNext               = VK_NULL_HANDLE,
         .flags               = 0,
-        .stage               = shader.stage,
-        .module              = shader.module,
+        .stage               = m_stage,
+        .module              = m_module,
         .pName               = "main",
         .pSpecializationInfo = VK_NULL_HANDLE
     };
@@ -43,7 +46,14 @@ VkPipelineShaderStageCreateInfo Shader_getInfo(Shader shader)
 }
 
 
-size_t read_shader_file(const char* filename, char** buffer) 
+bool Shader::isValid() const noexcept
+{
+    return (m_module != VK_NULL_HANDLE);
+}
+
+
+
+size_t read_shader_file(const char* filename, char** buffer) noexcept
 {
     FILE* file = fopen(filename, "rb");
 
@@ -88,7 +98,7 @@ size_t read_shader_file(const char* filename, char** buffer)
 }
 
 
-VkShaderModule create_shader_module(VkDevice device, const char* filename) 
+VkShaderModule create_shader_module(VkDevice device, const char* filename) noexcept
 {
     char* code;
     size_t codeSize = read_shader_file(filename, &code);
@@ -96,7 +106,7 @@ VkShaderModule create_shader_module(VkDevice device, const char* filename)
     if (codeSize == 0)
         return VK_NULL_HANDLE;
 
-    VkShaderModuleCreateInfo createInfo = 
+    const VkShaderModuleCreateInfo createInfo = 
     {
         .sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
         .pNext    = VK_NULL_HANDLE,

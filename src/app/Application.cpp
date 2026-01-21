@@ -1,11 +1,11 @@
 #ifdef DEBUG
-#include <stdio.h>
+#include <cstdio>
 #endif
-#include <stdio.h>
+#include <array>
+
 #include <cglm/struct/affine-pre.h>
 
-#include "vulkan_api/context/context.hpp"
-#include "vulkan_api/pipeline/graphics_pipeline.hpp"
+#include "vulkan_api/context/Context.hpp"
 #include "app/Application.hpp"
 
 
@@ -181,13 +181,13 @@ bool init_vulkan(VulkanApp* app)
 	VkDevice device = app->context.device;
 
 	{// Pipeline
-		Shader shaders[] = 
+		const std::array<Shader, 2> shaders = 
 		{
-			Shader_loadFromFile(device, VK_SHADER_STAGE_VERTEX_BIT, "res/shaders/vertex_shader.spv"),
-			Shader_loadFromFile(device, VK_SHADER_STAGE_FRAGMENT_BIT, "res/shaders/fragment_shader.spv")
+			Shader("res/shaders/vertex_shader.spv",   VK_SHADER_STAGE_VERTEX_BIT,   device),
+			Shader("res/shaders/fragment_shader.spv", VK_SHADER_STAGE_FRAGMENT_BIT, device)
 		};
 
-		if(!shaders[0].module || !shaders[1].module)
+		if(!shaders[0].isValid() || !shaders[1].isValid())
 			return false;
 
         const VertexInputStateAttributeType attributes[] =
@@ -201,7 +201,7 @@ bool init_vulkan(VulkanApp* app)
 
         GraphicsPipelineState pipelineState = {0};
 
-        GraphicsPipelineState_setupShaderStages(&pipelineState, shaders, sizeof(shaders) / sizeof(Shader));
+        GraphicsPipelineState_setupShaderStages(&pipelineState, shaders);
         GraphicsPipelineState_setupVertexInput(&pipelineState, attributes, sizeof(attributes) / sizeof(VertexInputStateAttributeType));
         GraphicsPipelineState_setupInputAssembler(&pipelineState, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
         GraphicsPipelineState_setupViewport(&pipelineState);
@@ -214,8 +214,6 @@ bool init_vulkan(VulkanApp* app)
             
 		free(uniformDescriptors.bindings);
 		GraphicsPipelineState_release(&pipelineState);
-		vkDestroyShaderModule(device, shaders[0].module, VK_NULL_HANDLE);
-		vkDestroyShaderModule(device, shaders[1].module, VK_NULL_HANDLE);
 
 		if(!result)
 			return false;

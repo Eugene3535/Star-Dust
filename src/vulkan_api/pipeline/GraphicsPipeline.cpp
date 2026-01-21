@@ -4,22 +4,22 @@
 
 #include "vulkan_api/utils/Tools.hpp"
 #include "vulkan_api/presentation/MainView.hpp"
-#include "vulkan_api/pipeline/graphics_pipeline.hpp"
+#include "vulkan_api/pipeline/GraphicsPipeline.hpp"
 
 
 
-void GraphicsPipelineState_setupShaderStages(GraphicsPipelineState* state, const Shader* shaders, uint32_t count)
+void GraphicsPipelineState_setupShaderStages(GraphicsPipelineState* state, std::span<const Shader> shaders) noexcept
 {
-    state->shaderInfo.data = (VkPipelineShaderStageCreateInfo*)malloc(count * sizeof(VkPipelineShaderStageCreateInfo));
-    state->shaderInfo.size = count;
+    state->shaderInfo.data = (VkPipelineShaderStageCreateInfo*)malloc(shaders.size() * sizeof(VkPipelineShaderStageCreateInfo));
+    state->shaderInfo.size = shaders.size();
 
     if(state->shaderInfo.data)
     {
         VkPipelineShaderStageCreateInfo* data = state->shaderInfo.data;
 
-        for (uint32_t i = 0; i < count; ++i)
+        for (uint32_t i = 0; i < shaders.size(); ++i)
         {
-            VkPipelineShaderStageCreateInfo info = Shader_getInfo(shaders[i]);
+            VkPipelineShaderStageCreateInfo info = shaders[i].getInfo();
             memcpy(data + i, &info, sizeof(VkPipelineShaderStageCreateInfo));
         }
     } 

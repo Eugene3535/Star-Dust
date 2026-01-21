@@ -2,11 +2,11 @@ set(SRC_FILES
 	src/vulkan_api/utils/Tools.cpp
 	src/vulkan_api/context/Context.cpp
 	src/vulkan_api/presentation/MainView.cpp
-	src/vulkan_api/pipeline/stages/shader/shader.cpp
+	src/vulkan_api/pipeline/stages/shader/Shader.cpp
 	src/vulkan_api/pipeline/stages/uniform/descriptor_set_layout.cpp
 	src/vulkan_api/pipeline/stages/vertex/vertex_input_state.cpp
 	src/vulkan_api/pipeline/descriptors/descriptor_pool.cpp
-	src/vulkan_api/pipeline/graphics_pipeline.cpp
+	src/vulkan_api/pipeline/GraphicsPipeline.cpp
 	src/vulkan_api/command_pool/command_buffer_pool.cpp
 	src/vulkan_api/sync/sync_manager.cpp
 	src/vulkan_api/texture/texture2D.cpp
@@ -21,11 +21,11 @@ set(HDR_FILES
 	src/vulkan_api/utils/Tools.hpp
 	src/vulkan_api/context/Context.hpp
 	src/vulkan_api/presentation/MainView.hpp
-	src/vulkan_api/pipeline/stages/shader/shader.hpp
+	src/vulkan_api/pipeline/stages/shader/Shader.hpp
 	src/vulkan_api/pipeline/stages/uniform/descriptor_set_layout.hpp
 	src/vulkan_api/pipeline/stages/vertex/vertex_input_state.hpp
 	src/vulkan_api/pipeline/descriptors/descriptor_pool.hpp
-	src/vulkan_api/pipeline/graphics_pipeline.hpp
+	src/vulkan_api/pipeline/GraphicsPipeline.hpp
 	src/vulkan_api/command_pool/command_buffer_pool.hpp
 	src/vulkan_api/sync/sync_manager.hpp
 	src/vulkan_api/texture/texture2D.hpp

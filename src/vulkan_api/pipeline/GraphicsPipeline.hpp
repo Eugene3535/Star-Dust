@@ -1,8 +1,10 @@
-#ifndef GRAPHICS_PIPELINE_H
-#define GRAPHICS_PIPELINE_H
+#ifndef GRAPHICS_PIPELINE_HPP
+#define GRAPHICS_PIPELINE_HPP
+
+#include <span>
 
 #include "vulkan_api/presentation/MainView.hpp"
-#include "vulkan_api/pipeline/stages/shader/shader.hpp"
+#include "vulkan_api/pipeline/stages/shader/Shader.hpp"
 #include "vulkan_api/pipeline/stages/vertex/vertex_input_state.hpp"
 #include "vulkan_api/pipeline/stages/uniform/descriptor_set_layout.hpp"
 
@@ -25,7 +27,7 @@ typedef struct
 } GraphicsPipelineState;
 
 
-void GraphicsPipelineState_setupShaderStages(GraphicsPipelineState* state, const Shader* shaders, uint32_t count);
+void GraphicsPipelineState_setupShaderStages(GraphicsPipelineState* state, std::span<const Shader> shaders) noexcept;
 void GraphicsPipelineState_setupVertexInput(GraphicsPipelineState* state, const VertexInputStateAttributeType* attributes, uint32_t count);
 void GraphicsPipelineState_setupInputAssembler(GraphicsPipelineState* state, const VkPrimitiveTopology primitive);
 void GraphicsPipelineState_setupViewport(GraphicsPipelineState* state);
@@ -47,4 +49,4 @@ typedef struct
 bool GraphicsPipeline_create(GraphicsPipeline* pipeline, const GraphicsPipelineState* state, const MainView* view);
 void GraphicsPipeline_destroy(GraphicsPipeline* pipeline, VkDevice device);
 
-#endif // !GRAPHICS_PIPELINE_H
+#endif // !GRAPHICS_PIPELINE_HPP
