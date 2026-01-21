@@ -22,14 +22,12 @@ struct MainView
     std::vector<VkImage>     images;
     std::vector<VkImageView> imageViews;
 
-//  Depth buffer TODO wrap to struct
     struct
     {
         VkImage        image       = VK_NULL_HANDLE;
         VkDeviceMemory imageMemory = VK_NULL_HANDLE;
         VkImageView    imageView   = VK_NULL_HANDLE;
     } depth;
-
 
     VkFormat   format;
     VkExtent2D extent;

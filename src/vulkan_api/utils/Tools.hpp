@@ -1,6 +1,8 @@
 #ifndef VULKAN_TOOLS_HPP
 #define VULKAN_TOOLS_HPP
 
+#include <cstdint>
+
 #include <vulkan/vulkan.h>
 
 #define MAX_FRAMES_IN_FLIGHT 2U

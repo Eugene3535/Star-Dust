@@ -154,7 +154,7 @@ void VulkanApp::destroy() noexcept
 	BufferHolder_destroy(&bufferHolder, device);
 	Texture2D_destroy(&texture, device);
 	SyncManager_destroy(&sync, device);
-	CommandBufferPool_destroy(&commandPool, device);
+	commandPool.destroy(device);
 	descriptorPool.destroy(device);
 	pipeline.destroy(device);
 
@@ -239,7 +239,7 @@ bool init_vulkan(VulkanApp* app) noexcept
 			return false;	
 	}
 
-	if(!CommandBufferPool_create(&app->commandPool, device, app->context.mainQueueFamilyIndex))
+	if(!app->commandPool.create(device, app->context.mainQueueFamilyIndex))
         return false;
 
 	if(!SyncManager_create(&app->sync, device))
