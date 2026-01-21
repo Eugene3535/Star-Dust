@@ -181,13 +181,12 @@ bool init_vulkan(VulkanApp* app)
 	VkDevice device = app->context.device;
 
 	{// Pipeline
-		const std::array<Shader, 2> shaders = 
-		{
-			Shader("res/shaders/vertex_shader.spv",   VK_SHADER_STAGE_VERTEX_BIT,   device),
-			Shader("res/shaders/fragment_shader.spv", VK_SHADER_STAGE_FRAGMENT_BIT, device)
-		};
+		std::array<Shader, 2> shaders;
 
-		if(!shaders[0].isValid() || !shaders[1].isValid())
+		if(!shaders[0].loadFromFile("res/shaders/vertex_shader.spv", VK_SHADER_STAGE_VERTEX_BIT, device))
+			return false;
+
+		if(!shaders[1].loadFromFile("res/shaders/fragment_shader.spv", VK_SHADER_STAGE_FRAGMENT_BIT, device))
 			return false;
 
         const VertexInputStateAttributeType attributes[] =
@@ -199,21 +198,22 @@ bool init_vulkan(VulkanApp* app)
         DescriptorSetLayout uniformDescriptors = {0};
         DescriptorSetLayout_addDescriptor(&uniformDescriptors, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
 
-        GraphicsPipelineState pipelineState = {0};
+        GraphicsPipelineState pipelineState;
 
-        GraphicsPipelineState_setupShaderStages(&pipelineState, shaders);
-        GraphicsPipelineState_setupVertexInput(&pipelineState, attributes, sizeof(attributes) / sizeof(VertexInputStateAttributeType));
-        GraphicsPipelineState_setupInputAssembler(&pipelineState, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
-        GraphicsPipelineState_setupViewport(&pipelineState);
-        GraphicsPipelineState_setupRasterization(&pipelineState, VK_POLYGON_MODE_FILL);
-        GraphicsPipelineState_setupMultisampling(&pipelineState);
-        GraphicsPipelineState_setupColorBlending(&pipelineState, VK_FALSE);
-        GraphicsPipelineState_setupDescriptorSetLayout(&pipelineState, &uniformDescriptors);
+        pipelineState.setupShaderStages(shaders);
+        pipelineState.setupVertexInput(attributes, sizeof(attributes) / sizeof(VertexInputStateAttributeType));
+        pipelineState.setupInputAssembler(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+        pipelineState.setupViewport();
+        pipelineState.setupRasterization(VK_POLYGON_MODE_FILL);
+        pipelineState.setupMultisampling();
+        pipelineState.setupColorBlending(VK_FALSE);
+        pipelineState.setupDescriptorSetLayout(&uniformDescriptors);
 
         bool result = GraphicsPipeline_create(&app->pipeline, &pipelineState, &app->view);
             
 		free(uniformDescriptors.bindings);
-		GraphicsPipelineState_release(&pipelineState);
+		shaders[0].destroy(device);
+		shaders[1].destroy(device);
 
 		if(!result)
 			return false;

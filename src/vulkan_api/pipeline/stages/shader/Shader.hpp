@@ -1,24 +1,20 @@
 #ifndef SHADER_MODULE_HPP
 #define SHADER_MODULE_HPP
 
-#include <filesystem>
-
 #include <vulkan/vulkan.h>
 
 
 class Shader
 {
 public:
-    Shader(const std::filesystem::path& filePath, VkShaderStageFlagBits stage, VkDevice device) noexcept;
-    ~Shader();
+    bool loadFromFile(const char* filePath, VkShaderStageFlagBits stage, VkDevice device) noexcept;
+    void destroy(VkDevice device) noexcept;
 
     VkPipelineShaderStageCreateInfo getInfo() const noexcept;
-    bool isValid() const noexcept;
 
 private:
-    VkShaderModule        m_module;
+    VkShaderModule        m_module = VK_NULL_HANDLE;
     VkShaderStageFlagBits m_stage;
-    VkDevice              m_device;
 };
 
 

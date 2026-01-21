@@ -1,6 +1,7 @@
 #ifndef GRAPHICS_PIPELINE_HPP
 #define GRAPHICS_PIPELINE_HPP
 
+#include <vector>
 #include <span>
 
 #include "vulkan_api/presentation/MainView.hpp"
@@ -9,41 +10,36 @@
 #include "vulkan_api/pipeline/stages/uniform/descriptor_set_layout.hpp"
 
 
-typedef struct
+struct GraphicsPipelineState
 {
-    struct
-    {
-        VkPipelineShaderStageCreateInfo* data;
-        uint32_t size;
-    } shaderInfo;
-    
-    VertexInputState                       vertexInputState;
-    VkPipelineInputAssemblyStateCreateInfo inputAssembly;
-    VkPipelineViewportStateCreateInfo      viewportState;
-    VkPipelineRasterizationStateCreateInfo rasterizer;
-    VkPipelineMultisampleStateCreateInfo   multisampling;
-    VkPipelineColorBlendAttachmentState    colorBlending;
-    DescriptorSetLayout                    layoutInfo;
-} GraphicsPipelineState;
+    ~GraphicsPipelineState();
+
+    void setupShaderStages(std::span<const Shader> shaders)                                noexcept;
+    void setupVertexInput(const VertexInputStateAttributeType* attributes, uint32_t count) noexcept;
+    void setupInputAssembler(const VkPrimitiveTopology primitive)                          noexcept;
+    void setupViewport()                                                                   noexcept;
+    void setupRasterization(VkPolygonMode mode)                                            noexcept;
+    void setupMultisampling()                                                              noexcept;
+    void setupColorBlending(VkBool32 enabled)                                              noexcept;
+    void setupDescriptorSetLayout(const DescriptorSetLayout* uniformDescriptorSet)         noexcept;
+
+    std::vector<VkPipelineShaderStageCreateInfo> shaderInfo;
+    VertexInputState                             vertexInputState;
+    VkPipelineInputAssemblyStateCreateInfo       inputAssembly;
+    VkPipelineViewportStateCreateInfo            viewportState;
+    VkPipelineRasterizationStateCreateInfo       rasterizer;
+    VkPipelineMultisampleStateCreateInfo         multisampling;
+    VkPipelineColorBlendAttachmentState          colorBlending;
+    DescriptorSetLayout                          layoutInfo;
+};
 
 
-void GraphicsPipelineState_setupShaderStages(GraphicsPipelineState* state, std::span<const Shader> shaders) noexcept;
-void GraphicsPipelineState_setupVertexInput(GraphicsPipelineState* state, const VertexInputStateAttributeType* attributes, uint32_t count);
-void GraphicsPipelineState_setupInputAssembler(GraphicsPipelineState* state, const VkPrimitiveTopology primitive);
-void GraphicsPipelineState_setupViewport(GraphicsPipelineState* state);
-void GraphicsPipelineState_setupRasterization(GraphicsPipelineState* state, VkPolygonMode mode);
-void GraphicsPipelineState_setupMultisampling(GraphicsPipelineState* state);
-void GraphicsPipelineState_setupColorBlending(GraphicsPipelineState* state, VkBool32 enabled);
-void GraphicsPipelineState_setupDescriptorSetLayout(GraphicsPipelineState* state, const DescriptorSetLayout* uniformDescriptorSet);
-void GraphicsPipelineState_release(const GraphicsPipelineState* state);
-
-
-typedef struct
+struct GraphicsPipeline
 {
     VkDescriptorSetLayout descriptorSetLayout;
     VkPipelineLayout      layout;
     VkPipeline            handle;
-} GraphicsPipeline;
+};
 
 
 bool GraphicsPipeline_create(GraphicsPipeline* pipeline, const GraphicsPipelineState* state, const MainView* view);

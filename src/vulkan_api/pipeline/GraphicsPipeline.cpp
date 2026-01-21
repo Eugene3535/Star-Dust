@@ -7,108 +7,95 @@
 #include "vulkan_api/pipeline/GraphicsPipeline.hpp"
 
 
-
-void GraphicsPipelineState_setupShaderStages(GraphicsPipelineState* state, std::span<const Shader> shaders) noexcept
+GraphicsPipelineState::~GraphicsPipelineState()
 {
-    state->shaderInfo.data = (VkPipelineShaderStageCreateInfo*)malloc(shaders.size() * sizeof(VkPipelineShaderStageCreateInfo));
-    state->shaderInfo.size = shaders.size();
-
-    if(state->shaderInfo.data)
-    {
-        VkPipelineShaderStageCreateInfo* data = state->shaderInfo.data;
-
-        for (uint32_t i = 0; i < shaders.size(); ++i)
-        {
-            VkPipelineShaderStageCreateInfo info = shaders[i].getInfo();
-            memcpy(data + i, &info, sizeof(VkPipelineShaderStageCreateInfo));
-        }
-    } 
+    free(vertexInputState.attributeDescriptions.data);
 }
 
 
-void GraphicsPipelineState_setupVertexInput(GraphicsPipelineState* state, const VertexInputStateAttributeType* attributes, uint32_t count)
+void GraphicsPipelineState::setupShaderStages(std::span<const Shader> shaders) noexcept
 {
-    VertexInputState_create(&state->vertexInputState, attributes, count); // TODO сюда перенести инициализацию входного состояния вершин 
+    for(const auto shader : shaders)
+        shaderInfo.emplace_back(shader.getInfo());
 }
 
 
-void GraphicsPipelineState_setupInputAssembler(GraphicsPipelineState* state, const VkPrimitiveTopology primitive)
+void GraphicsPipelineState::setupVertexInput(const VertexInputStateAttributeType* attributes, uint32_t count) noexcept
 {
-    state->inputAssembly.sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-    state->inputAssembly.pNext                  = VK_NULL_HANDLE;
-    state->inputAssembly.flags                  = 0;
-    state->inputAssembly.topology               = primitive;
-    state->inputAssembly.primitiveRestartEnable = VK_FALSE;
+    VertexInputState_create(&vertexInputState, attributes, count); // TODO сюда перенести инициализацию входного состояния вершин 
 }
 
 
-void GraphicsPipelineState_setupViewport(GraphicsPipelineState* state)
+void GraphicsPipelineState::setupInputAssembler(const VkPrimitiveTopology primitive) noexcept
 {
-    state->viewportState.sType         = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-    state->viewportState.pNext         = VK_NULL_HANDLE;
-    state->viewportState.flags         = 0;
-    state->viewportState.viewportCount = 1;
-    state->viewportState.pViewports    = VK_NULL_HANDLE;
-    state->viewportState.scissorCount  = 1;
-    state->viewportState.pScissors     = VK_NULL_HANDLE;
+    inputAssembly.sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+    inputAssembly.pNext                  = VK_NULL_HANDLE;
+    inputAssembly.flags                  = 0;
+    inputAssembly.topology               = primitive;
+    inputAssembly.primitiveRestartEnable = VK_FALSE;
 }
 
 
-void GraphicsPipelineState_setupRasterization(GraphicsPipelineState* state, VkPolygonMode mode)
+void GraphicsPipelineState::setupViewport() noexcept
 {
-    state->rasterizer.sType                   = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-    state->rasterizer.pNext                   = VK_NULL_HANDLE;
-    state->rasterizer.flags                   = 0;
-    state->rasterizer.depthClampEnable        = VK_FALSE;
-    state->rasterizer.rasterizerDiscardEnable = VK_FALSE;
-    state->rasterizer.polygonMode             = VK_POLYGON_MODE_FILL;
-    state->rasterizer.cullMode                = VK_CULL_MODE_NONE; // TODO Добавить переключение отсечения граней, например VK_CULL_MODE_FRONT_BIT
-    state->rasterizer.frontFace               = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-    state->rasterizer.depthBiasEnable         = VK_FALSE;
-    state->rasterizer.depthBiasConstantFactor = 0.f;
-    state->rasterizer.depthBiasClamp          = 0.f;
-    state->rasterizer.depthBiasSlopeFactor    = 0.f;
-    state->rasterizer.lineWidth               = 1.f;
+    viewportState.sType         = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+    viewportState.pNext         = VK_NULL_HANDLE;
+    viewportState.flags         = 0;
+    viewportState.viewportCount = 1;
+    viewportState.pViewports    = VK_NULL_HANDLE;
+    viewportState.scissorCount  = 1;
+    viewportState.pScissors     = VK_NULL_HANDLE;
 }
 
 
-void GraphicsPipelineState_setupMultisampling(GraphicsPipelineState* state)
+void GraphicsPipelineState::setupRasterization(VkPolygonMode mode) noexcept
 {
-    state->multisampling.sType                 = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-    state->multisampling.pNext                 = VK_NULL_HANDLE;
-    state->multisampling.flags                 = 0;
-    state->multisampling.rasterizationSamples  = VK_SAMPLE_COUNT_1_BIT;
-    state->multisampling.sampleShadingEnable   = VK_FALSE;
-    state->multisampling.minSampleShading      = 1.f;
-    state->multisampling.pSampleMask           = VK_NULL_HANDLE;
-    state->multisampling.alphaToCoverageEnable = VK_FALSE;
-    state->multisampling.alphaToOneEnable      = VK_FALSE;
+    rasterizer.sType                   = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+    rasterizer.pNext                   = VK_NULL_HANDLE;
+    rasterizer.flags                   = 0;
+    rasterizer.depthClampEnable        = VK_FALSE;
+    rasterizer.rasterizerDiscardEnable = VK_FALSE;
+    rasterizer.polygonMode             = VK_POLYGON_MODE_FILL;
+    rasterizer.cullMode                = VK_CULL_MODE_NONE; // TODO Добавить переключение отсечения граней, например VK_CULL_MODE_FRONT_BIT
+    rasterizer.frontFace               = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+    rasterizer.depthBiasEnable         = VK_FALSE;
+    rasterizer.depthBiasConstantFactor = 0.f;
+    rasterizer.depthBiasClamp          = 0.f;
+    rasterizer.depthBiasSlopeFactor    = 0.f;
+    rasterizer.lineWidth               = 1.f;
 }
 
 
-void GraphicsPipelineState_setupColorBlending(GraphicsPipelineState* state, VkBool32 enabled)
+void GraphicsPipelineState::setupMultisampling() noexcept
 {
-    state->colorBlending.blendEnable         = enabled;
-    state->colorBlending.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-    state->colorBlending.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-    state->colorBlending.colorBlendOp        = VK_BLEND_OP_ADD;
-    state->colorBlending.srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-    state->colorBlending.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-    state->colorBlending.alphaBlendOp        = VK_BLEND_OP_ADD;
-    state->colorBlending.colorWriteMask      = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+    multisampling.sType                 = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+    multisampling.pNext                 = VK_NULL_HANDLE;
+    multisampling.flags                 = 0;
+    multisampling.rasterizationSamples  = VK_SAMPLE_COUNT_1_BIT;
+    multisampling.sampleShadingEnable   = VK_FALSE;
+    multisampling.minSampleShading      = 1.f;
+    multisampling.pSampleMask           = VK_NULL_HANDLE;
+    multisampling.alphaToCoverageEnable = VK_FALSE;
+    multisampling.alphaToOneEnable      = VK_FALSE;
 }
 
 
-void GraphicsPipelineState_setupDescriptorSetLayout(GraphicsPipelineState* state, const DescriptorSetLayout* uniformDescriptorSet)
+void GraphicsPipelineState::setupColorBlending(VkBool32 enabled) noexcept
 {
-    memcpy(&state->layoutInfo, uniformDescriptorSet, sizeof(DescriptorSetLayout));
+    colorBlending.blendEnable         = enabled;
+    colorBlending.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+    colorBlending.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+    colorBlending.colorBlendOp        = VK_BLEND_OP_ADD;
+    colorBlending.srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+    colorBlending.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+    colorBlending.alphaBlendOp        = VK_BLEND_OP_ADD;
+    colorBlending.colorWriteMask      = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 }
 
 
-void GraphicsPipelineState_release(const GraphicsPipelineState* state)
+void GraphicsPipelineState::setupDescriptorSetLayout(const DescriptorSetLayout* uniformDescriptorSet) noexcept
 {
-    free(state->shaderInfo.data);
-    free(state->vertexInputState.attributeDescriptions.data);
+    memcpy(&layoutInfo, uniformDescriptorSet, sizeof(DescriptorSetLayout));
 }
 
 
@@ -208,8 +195,8 @@ bool GraphicsPipeline_create(GraphicsPipeline* pipeline, const GraphicsPipelineS
         .sType               = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
         .pNext               = &pipelineRenderingInfo,
         .flags               = 0,
-        .stageCount          = state->shaderInfo.size,
-        .pStages             = state->shaderInfo.data,
+        .stageCount          = static_cast<uint32_t>(state->shaderInfo.size()),
+        .pStages             = state->shaderInfo.data(),
         .pVertexInputState   = &vertexInput,
         .pInputAssemblyState = &state->inputAssembly,
         .pTessellationState  = VK_NULL_HANDLE,
