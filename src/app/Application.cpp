@@ -152,7 +152,7 @@ void VulkanApp::destroy() noexcept
 	VkDevice device = context.device;
 
 	BufferHolder_destroy(&bufferHolder, device);
-	Texture2D_destroy(&texture, device);
+	texture.destroy(device);
 	sync.destroy(device);
 	commandPool.destroy(device);
 	descriptorPool.destroy(device);
@@ -246,7 +246,7 @@ bool init_vulkan(VulkanApp* app) noexcept
 		return false;
 
 	{
-        if(!Texture2D_loadFromFile(&app->texture, "res/textures/container.jpg", &app->context, app->commandPool.handle))
+        if(!app->texture.loadFromFile("res/textures/container.jpg", &app->context, app->commandPool.handle))
             return false;
                 
         const VkDescriptorImageInfo imageInfo = 
