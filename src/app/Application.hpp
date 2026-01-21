@@ -4,7 +4,7 @@
 #include "vulkan_api/pipeline/descriptors/DescriptorPool.hpp"
 #include "vulkan_api/pipeline/GraphicsPipeline.hpp"
 #include "vulkan_api/command_pool/CommandBufferPool.hpp"
-#include "vulkan_api/sync/sync_manager.hpp"
+#include "vulkan_api/sync/SyncManager.hpp"
 #include "vulkan_api/texture/texture2D.hpp"
 #include "vulkan_api/buffers//buffer_holder.hpp"
 #include "vulkan_api/render/render.hpp"

@@ -153,7 +153,7 @@ void VulkanApp::destroy() noexcept
 
 	BufferHolder_destroy(&bufferHolder, device);
 	Texture2D_destroy(&texture, device);
-	SyncManager_destroy(&sync, device);
+	sync.destroy(device);
 	commandPool.destroy(device);
 	descriptorPool.destroy(device);
 	pipeline.destroy(device);
@@ -242,7 +242,7 @@ bool init_vulkan(VulkanApp* app) noexcept
 	if(!app->commandPool.create(device, app->context.mainQueueFamilyIndex))
         return false;
 
-	if(!SyncManager_create(&app->sync, device))
+	if(!app->sync.create(device))
 		return false;
 
 	{
@@ -418,12 +418,13 @@ void draw_frame(VulkanApp* app) noexcept
         return;
 
     VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+	
     const VkSubmitInfo submitInfo = 
 	{
 		.sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO,
 		.pNext                = VK_NULL_HANDLE,
 		.waitSemaphoreCount   = 1,
-		.pWaitSemaphores      = app->sync.imageAvailableSemaphores + frame,
+		.pWaitSemaphores      = app->sync.imageAvailableSemaphores.data() + frame,
 		.pWaitDstStageMask    = waitStages,
 		.commandBufferCount   = 1,
 		.pCommandBuffers      = &app->commandPool.commandBuffers[frame],
