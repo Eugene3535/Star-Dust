@@ -7,22 +7,12 @@
 #include "vulkan_api/pipeline/GraphicsPipeline.hpp"
 
 
-GraphicsPipeline::State::~State()
-{
-    free(vertexInputState.attributeDescriptions.data);
-}
-
-
-void GraphicsPipeline::State::setupShaderStages(std::span<const Shader> shaders) noexcept
+void GraphicsPipeline::State::setupShaderStages(std::span<const Shader> shaders, std::span<const VertexInputState::AttributeType> attributes) noexcept
 {
     for(const auto shader : shaders)
         shaderInfo.emplace_back(shader.getInfo());
-}
 
-
-void GraphicsPipeline::State::setupVertexInput(const VertexInputState::AttributeType* attributes, uint32_t count) noexcept
-{
-    VertexInputState_create(&vertexInputState, attributes, count); // TODO сюда перенести инициализацию входного состояния вершин 
+    vertexInputState.create(attributes);
 }
 
 
@@ -109,7 +99,7 @@ bool GraphicsPipeline::create(const GraphicsPipeline::State& state, const MainVi
     const VkFormat colorFormat = view.format;
     const VkFormat depthFormat = vktools::find_depth_format(GPU);
 
-    const VkPipelineVertexInputStateCreateInfo vertexInput = VertexInputState_getInfo(&state.vertexInputState);
+    const VkPipelineVertexInputStateCreateInfo vertexInput = state.vertexInputState.getInfo();
 
     const VkPipelineRenderingCreateInfoKHR pipelineRenderingInfo =
     {

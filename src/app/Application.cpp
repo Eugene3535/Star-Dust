@@ -189,7 +189,7 @@ bool init_vulkan(VulkanApp* app)
 		if(!shaders[1].loadFromFile("res/shaders/fragment_shader.spv", VK_SHADER_STAGE_FRAGMENT_BIT, device))
 			return false;
 
-        const VertexInputState::AttributeType attributes[] =
+        std::array<const VertexInputState::AttributeType, 2> attributes =
         {
             VertexInputState::Float3,
             VertexInputState::Float2
@@ -200,8 +200,7 @@ bool init_vulkan(VulkanApp* app)
 
         GraphicsPipeline::State pipelineState;
 
-        pipelineState.setupShaderStages(shaders);
-        pipelineState.setupVertexInput(attributes, sizeof(attributes) / sizeof(VertexInputState::AttributeType));
+        pipelineState.setupShaderStages(shaders, attributes);
         pipelineState.setupInputAssembler(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
         pipelineState.setupViewport();
         pipelineState.setupRasterization(VK_POLYGON_MODE_FILL);

@@ -1,4 +1,4 @@
-#include "vulkan_api/pipeline/stages/vertex/vertex_input_state.hpp"
+#include "vulkan_api/pipeline/stages/shader/VertexInputState.hpp"
 
 
 static uint32_t shader_attribute_type_to_component_count(const VertexInputState::AttributeType type);
@@ -7,45 +7,39 @@ static VkFormat shader_attribute_type_to_vk_format(const VertexInputState::Attri
 
 
 
-void VertexInputState_create(VertexInputState* state, const VertexInputState::AttributeType* attributes, uint32_t count)
+void VertexInputState::create(std::span<const VertexInputState::AttributeType> attributes) noexcept
 {
-    state->attributeDescriptions.data = (VkVertexInputAttributeDescription*)malloc(count * sizeof(VkVertexInputAttributeDescription));
+    attributeDescriptions.resize(attributes.size());
+    VkVertexInputAttributeDescription* descriptions = attributeDescriptions.data();
+    uint32_t offset = 0;
 
-    if(state->attributeDescriptions.data)
+    for (uint32_t i = 0; i < attributes.size(); ++i)
     {
-        state->attributeDescriptions.size = count;
+        descriptions[i].location = i;
+        descriptions[i].binding  = 0;
+        descriptions[i].format   = shader_attribute_type_to_vk_format(attributes[i]);
+        descriptions[i].offset   = offset;
 
-        VkVertexInputAttributeDescription* descriptions = state->attributeDescriptions.data;
-        uint32_t offset = 0;
-
-        for (uint32_t i = 0; i < count; ++i)
-        {
-            descriptions[i].location = i;
-            descriptions[i].binding  = 0;
-            descriptions[i].format   = shader_attribute_type_to_vk_format(attributes[i]);
-            descriptions[i].offset   = offset;
-
-            offset += shader_attribute_type_sizeof(attributes[i]);
-        }
-
-        state->bindingDescription.binding   = 0;
-        state->bindingDescription.stride    = offset;
-        state->bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+        offset += shader_attribute_type_sizeof(attributes[i]);
     }
+
+    bindingDescription.binding   = 0;
+    bindingDescription.stride    = offset;
+    bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 }
 
 
-VkPipelineVertexInputStateCreateInfo VertexInputState_getInfo(const VertexInputState* state)
+VkPipelineVertexInputStateCreateInfo VertexInputState::getInfo() const noexcept
 {
-    VkPipelineVertexInputStateCreateInfo info = 
+    const VkPipelineVertexInputStateCreateInfo info = 
     {
         .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
         .pNext                           = VK_NULL_HANDLE,
         .flags                           = 0,
         .vertexBindingDescriptionCount   = 1,
-        .pVertexBindingDescriptions      = &state->bindingDescription,
-        .vertexAttributeDescriptionCount = state->attributeDescriptions.size,
-        .pVertexAttributeDescriptions    = state->attributeDescriptions.data
+        .pVertexBindingDescriptions      = &bindingDescription,
+        .vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size()),
+        .pVertexAttributeDescriptions    = attributeDescriptions.data()
     };
 
     return info;

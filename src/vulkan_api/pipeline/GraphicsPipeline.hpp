@@ -6,7 +6,7 @@
 
 #include "vulkan_api/presentation/MainView.hpp"
 #include "vulkan_api/pipeline/stages/shader/Shader.hpp"
-#include "vulkan_api/pipeline/stages/vertex/vertex_input_state.hpp"
+#include "vulkan_api/pipeline/stages/shader/VertexInputState.hpp"
 #include "vulkan_api/pipeline/stages/uniform/descriptor_set_layout.hpp"
 
 
@@ -14,16 +14,13 @@ struct GraphicsPipeline
 {
     struct State
     {
-        ~State();
-
-        void setupShaderStages(std::span<const Shader> shaders)                                  noexcept;
-        void setupVertexInput(const VertexInputState::AttributeType* attributes, uint32_t count) noexcept;
-        void setupInputAssembler(const VkPrimitiveTopology primitive)                            noexcept;
-        void setupViewport()                                                                     noexcept;
-        void setupRasterization(VkPolygonMode mode)                                              noexcept;
-        void setupMultisampling()                                                                noexcept;
-        void setupColorBlending(VkBool32 enabled)                                                noexcept;
-        void setupDescriptorSetLayout(const DescriptorSetLayout* uniformDescriptorSet)           noexcept;
+        void setupShaderStages(std::span<const Shader> shaders, std::span<const VertexInputState::AttributeType> attributes) noexcept;
+        void setupInputAssembler(const VkPrimitiveTopology primitive)                                                        noexcept;
+        void setupViewport()                                                                                                 noexcept;
+        void setupRasterization(VkPolygonMode mode)                                                                          noexcept;
+        void setupMultisampling()                                                                                            noexcept;
+        void setupColorBlending(VkBool32 enabled)                                                                            noexcept;
+        void setupDescriptorSetLayout(const DescriptorSetLayout* uniformDescriptorSet)                                       noexcept;
 
         std::vector<VkPipelineShaderStageCreateInfo> shaderInfo;
         VertexInputState                             vertexInputState;
