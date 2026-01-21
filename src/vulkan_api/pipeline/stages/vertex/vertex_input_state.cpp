@@ -1,13 +1,13 @@
 #include "vulkan_api/pipeline/stages/vertex/vertex_input_state.hpp"
 
 
-static uint32_t shader_attribute_type_to_component_count(const VertexInputStateAttributeType type);
-static size_t   shader_attribute_type_sizeof(const VertexInputStateAttributeType type);
-static VkFormat shader_attribute_type_to_vk_format(const VertexInputStateAttributeType type);
+static uint32_t shader_attribute_type_to_component_count(const VertexInputState::AttributeType type);
+static size_t   shader_attribute_type_sizeof(const VertexInputState::AttributeType type);
+static VkFormat shader_attribute_type_to_vk_format(const VertexInputState::AttributeType type);
 
 
 
-void VertexInputState_create(VertexInputState* state, const VertexInputStateAttributeType* attributes, uint32_t count)
+void VertexInputState_create(VertexInputState* state, const VertexInputState::AttributeType* attributes, uint32_t count)
 {
     state->attributeDescriptions.data = (VkVertexInputAttributeDescription*)malloc(count * sizeof(VkVertexInputAttributeDescription));
 
@@ -53,24 +53,24 @@ VkPipelineVertexInputStateCreateInfo VertexInputState_getInfo(const VertexInputS
 
 
 
-uint32_t shader_attribute_type_to_component_count(const VertexInputStateAttributeType type)
+uint32_t shader_attribute_type_to_component_count(const VertexInputState::AttributeType type)
 {
     switch (type)
     {
-        case Float1:
-        case Int1:
+        case VertexInputState::Float1:
+        case VertexInputState::Int1:
             return 1;
 
-        case Float2:
-        case Int2:
+        case VertexInputState::Float2:
+        case VertexInputState::Int2:
             return 2;
 
-        case Float3:
-        case Int3:
+        case VertexInputState::Float3:
+        case VertexInputState::Int3:
             return 3;
 
-        case Float4:
-        case Int4:
+        case VertexInputState::Float4:
+        case VertexInputState::Int4:
             return 4;
     }
 
@@ -78,20 +78,20 @@ uint32_t shader_attribute_type_to_component_count(const VertexInputStateAttribut
 }
 
 
-size_t shader_attribute_type_sizeof(const VertexInputStateAttributeType type)
+size_t shader_attribute_type_sizeof(const VertexInputState::AttributeType type)
 {
     switch (type)
     {
-        case Float1:
-        case Float2:
-        case Float3:
-        case Float4:
+        case VertexInputState::Float1:
+        case VertexInputState::Float2:
+        case VertexInputState::Float3:
+        case VertexInputState::Float4:
             return sizeof(float) * shader_attribute_type_to_component_count(type);
 
-        case Int1:
-        case Int2:
-        case Int3:
-        case Int4:
+        case VertexInputState::Int1:
+        case VertexInputState::Int2:
+        case VertexInputState::Int3:
+        case VertexInputState::Int4:
             return sizeof(int32_t) * shader_attribute_type_to_component_count(type);
     }
 
@@ -99,19 +99,19 @@ size_t shader_attribute_type_sizeof(const VertexInputStateAttributeType type)
 }
 
 
-VkFormat shader_attribute_type_to_vk_format(const VertexInputStateAttributeType type)
+VkFormat shader_attribute_type_to_vk_format(const VertexInputState::AttributeType type)
 {
     switch (type)
     {
-        case Float1: return VK_FORMAT_R32_SFLOAT;
-        case Float2: return VK_FORMAT_R32G32_SFLOAT;
-        case Float3: return VK_FORMAT_R32G32B32_SFLOAT;
-        case Float4: return VK_FORMAT_R32G32B32A32_SFLOAT;
+        case VertexInputState::Float1: return VK_FORMAT_R32_SFLOAT;
+        case VertexInputState::Float2: return VK_FORMAT_R32G32_SFLOAT;
+        case VertexInputState::Float3: return VK_FORMAT_R32G32B32_SFLOAT;
+        case VertexInputState::Float4: return VK_FORMAT_R32G32B32A32_SFLOAT;
 
-        case Int1: return VK_FORMAT_R32_SINT;
-        case Int2: return VK_FORMAT_R32G32_SINT;
-        case Int3: return VK_FORMAT_R32G32B32_SINT;
-        case Int4: return VK_FORMAT_R32G32B32A32_SINT;
+        case VertexInputState::Int1: return VK_FORMAT_R32_SINT;
+        case VertexInputState::Int2: return VK_FORMAT_R32G32_SINT;
+        case VertexInputState::Int3: return VK_FORMAT_R32G32B32_SINT;
+        case VertexInputState::Int4: return VK_FORMAT_R32G32B32A32_SINT;
     }
 
     return VK_FORMAT_UNDEFINED;

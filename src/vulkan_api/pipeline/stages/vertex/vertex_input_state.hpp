@@ -4,21 +4,23 @@
 #include <vulkan/vulkan.h>
 
 
-typedef enum
-{
-    Float1,
-    Float2,
-    Float3,
-    Float4,
-    Int1,
-    Int2,
-    Int3,
-    Int4
-} VertexInputStateAttributeType;
 
 
-typedef struct
+
+struct VertexInputState
 {
+    enum AttributeType
+    {
+        Float1,
+        Float2,
+        Float3,
+        Float4,
+        Int1,
+        Int2,
+        Int3,
+        Int4
+    };
+
     struct
     {
         VkVertexInputAttributeDescription* data;
@@ -26,10 +28,10 @@ typedef struct
     } attributeDescriptions;
 
     VkVertexInputBindingDescription bindingDescription;
-} VertexInputState;
+};
 
 
-void VertexInputState_create(VertexInputState* state, const VertexInputStateAttributeType* attributes, uint32_t count);
+void VertexInputState_create(VertexInputState* state, const VertexInputState::AttributeType* attributes, uint32_t count);
 VkPipelineVertexInputStateCreateInfo VertexInputState_getInfo(const VertexInputState* state);
 
 #endif // !VERTEX_INPUT_STATE_H

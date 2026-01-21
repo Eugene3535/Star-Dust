@@ -156,7 +156,7 @@ void VulkanApp::destroy() noexcept
 	SyncManager_destroy(&sync, device);
 	CommandBufferPool_destroy(&commandPool, device);
 	DescriptorPool_destroy(&descriptorPool, device);
-	GraphicsPipeline_destroy(&pipeline, device);
+	pipeline.destroy(device);
 
 	view.destroy();
 	context.destroy();
@@ -189,19 +189,19 @@ bool init_vulkan(VulkanApp* app)
 		if(!shaders[1].loadFromFile("res/shaders/fragment_shader.spv", VK_SHADER_STAGE_FRAGMENT_BIT, device))
 			return false;
 
-        const VertexInputStateAttributeType attributes[] =
+        const VertexInputState::AttributeType attributes[] =
         {
-            Float3,
-            Float2
+            VertexInputState::Float3,
+            VertexInputState::Float2
         };
 
         DescriptorSetLayout uniformDescriptors = {0};
         DescriptorSetLayout_addDescriptor(&uniformDescriptors, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
 
-        GraphicsPipelineState pipelineState;
+        GraphicsPipeline::State pipelineState;
 
         pipelineState.setupShaderStages(shaders);
-        pipelineState.setupVertexInput(attributes, sizeof(attributes) / sizeof(VertexInputStateAttributeType));
+        pipelineState.setupVertexInput(attributes, sizeof(attributes) / sizeof(VertexInputState::AttributeType));
         pipelineState.setupInputAssembler(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
         pipelineState.setupViewport();
         pipelineState.setupRasterization(VK_POLYGON_MODE_FILL);
@@ -209,7 +209,7 @@ bool init_vulkan(VulkanApp* app)
         pipelineState.setupColorBlending(VK_FALSE);
         pipelineState.setupDescriptorSetLayout(&uniformDescriptors);
 
-        bool result = GraphicsPipeline_create(&app->pipeline, &pipelineState, &app->view);
+        bool result = app->pipeline.create(pipelineState, app->view);
             
 		free(uniformDescriptors.bindings);
 		shaders[0].destroy(device);

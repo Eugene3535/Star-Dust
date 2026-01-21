@@ -7,26 +7,26 @@
 #include "vulkan_api/pipeline/GraphicsPipeline.hpp"
 
 
-GraphicsPipelineState::~GraphicsPipelineState()
+GraphicsPipeline::State::~State()
 {
     free(vertexInputState.attributeDescriptions.data);
 }
 
 
-void GraphicsPipelineState::setupShaderStages(std::span<const Shader> shaders) noexcept
+void GraphicsPipeline::State::setupShaderStages(std::span<const Shader> shaders) noexcept
 {
     for(const auto shader : shaders)
         shaderInfo.emplace_back(shader.getInfo());
 }
 
 
-void GraphicsPipelineState::setupVertexInput(const VertexInputStateAttributeType* attributes, uint32_t count) noexcept
+void GraphicsPipeline::State::setupVertexInput(const VertexInputState::AttributeType* attributes, uint32_t count) noexcept
 {
     VertexInputState_create(&vertexInputState, attributes, count); // TODO сюда перенести инициализацию входного состояния вершин 
 }
 
 
-void GraphicsPipelineState::setupInputAssembler(const VkPrimitiveTopology primitive) noexcept
+void GraphicsPipeline::State::setupInputAssembler(const VkPrimitiveTopology primitive) noexcept
 {
     inputAssembly.sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
     inputAssembly.pNext                  = VK_NULL_HANDLE;
@@ -36,7 +36,7 @@ void GraphicsPipelineState::setupInputAssembler(const VkPrimitiveTopology primit
 }
 
 
-void GraphicsPipelineState::setupViewport() noexcept
+void GraphicsPipeline::State::setupViewport() noexcept
 {
     viewportState.sType         = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
     viewportState.pNext         = VK_NULL_HANDLE;
@@ -48,7 +48,7 @@ void GraphicsPipelineState::setupViewport() noexcept
 }
 
 
-void GraphicsPipelineState::setupRasterization(VkPolygonMode mode) noexcept
+void GraphicsPipeline::State::setupRasterization(VkPolygonMode mode) noexcept
 {
     rasterizer.sType                   = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
     rasterizer.pNext                   = VK_NULL_HANDLE;
@@ -66,7 +66,7 @@ void GraphicsPipelineState::setupRasterization(VkPolygonMode mode) noexcept
 }
 
 
-void GraphicsPipelineState::setupMultisampling() noexcept
+void GraphicsPipeline::State::setupMultisampling() noexcept
 {
     multisampling.sType                 = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
     multisampling.pNext                 = VK_NULL_HANDLE;
@@ -80,7 +80,7 @@ void GraphicsPipelineState::setupMultisampling() noexcept
 }
 
 
-void GraphicsPipelineState::setupColorBlending(VkBool32 enabled) noexcept
+void GraphicsPipeline::State::setupColorBlending(VkBool32 enabled) noexcept
 {
     colorBlending.blendEnable         = enabled;
     colorBlending.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
@@ -93,23 +93,23 @@ void GraphicsPipelineState::setupColorBlending(VkBool32 enabled) noexcept
 }
 
 
-void GraphicsPipelineState::setupDescriptorSetLayout(const DescriptorSetLayout* uniformDescriptorSet) noexcept
+void GraphicsPipeline::State::setupDescriptorSetLayout(const DescriptorSetLayout* uniformDescriptorSet) noexcept
 {
     memcpy(&layoutInfo, uniformDescriptorSet, sizeof(DescriptorSetLayout));
 }
 
 
 
-bool GraphicsPipeline_create(GraphicsPipeline* pipeline, const GraphicsPipelineState* state, const MainView* view)
+bool GraphicsPipeline::create(const GraphicsPipeline::State& state, const MainView& view)
 {
-    VkPhysicalDevice GPU    = view->context->GPU;
-    VkDevice         device = view->context->device;
-    GraphicsPipeline_destroy(pipeline, device); // for recreate case
+    VkPhysicalDevice GPU    = view.context->GPU;
+    VkDevice         device = view.context->device;
+    destroy(device); // for recreate case
 
-    const VkFormat colorFormat = view->format;
+    const VkFormat colorFormat = view.format;
     const VkFormat depthFormat = vktools::find_depth_format(GPU);
 
-    const VkPipelineVertexInputStateCreateInfo vertexInput = VertexInputState_getInfo(&state->vertexInputState);
+    const VkPipelineVertexInputStateCreateInfo vertexInput = VertexInputState_getInfo(&state.vertexInputState);
 
     const VkPipelineRenderingCreateInfoKHR pipelineRenderingInfo =
     {
@@ -130,7 +130,7 @@ bool GraphicsPipeline_create(GraphicsPipeline* pipeline, const GraphicsPipelineS
         .logicOpEnable   = VK_FALSE,
         .logicOp         = VK_LOGIC_OP_COPY,
         .attachmentCount = 1,
-        .pAttachments    = &state->colorBlending
+        .pAttachments    = &state.colorBlending
     };
 
     const VkDynamicState dynamicStates[] = 
@@ -148,9 +148,9 @@ bool GraphicsPipeline_create(GraphicsPipeline* pipeline, const GraphicsPipelineS
         .pDynamicStates    = dynamicStates
     };
 
-    const VkDescriptorSetLayoutCreateInfo layoutInfo = DescriptorSetLayout_getInfo(&state->layoutInfo);
+    const VkDescriptorSetLayoutCreateInfo layoutInfo = DescriptorSetLayout_getInfo(&state.layoutInfo);
 
-    if (vkCreateDescriptorSetLayout(device, &layoutInfo, VK_NULL_HANDLE, &pipeline->descriptorSetLayout) != VK_SUCCESS)
+    if (vkCreateDescriptorSetLayout(device, &layoutInfo, VK_NULL_HANDLE, &descriptorSetLayout) != VK_SUCCESS)
         return false;
 
     const VkPushConstantRange pushConstantRange = 
@@ -166,12 +166,12 @@ bool GraphicsPipeline_create(GraphicsPipeline* pipeline, const GraphicsPipelineS
         .pNext                  = VK_NULL_HANDLE,
         .flags                  = 0,
         .setLayoutCount         = 1,
-        .pSetLayouts            = &pipeline->descriptorSetLayout,
+        .pSetLayouts            = &descriptorSetLayout,
         .pushConstantRangeCount = 1,
         .pPushConstantRanges    = &pushConstantRange
     };
 
-    if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, VK_NULL_HANDLE, &pipeline->layout) != VK_SUCCESS)
+    if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, VK_NULL_HANDLE, &layout) != VK_SUCCESS)
         return false;
 
     const VkPipelineDepthStencilStateCreateInfo depthStencil = 
@@ -195,38 +195,40 @@ bool GraphicsPipeline_create(GraphicsPipeline* pipeline, const GraphicsPipelineS
         .sType               = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
         .pNext               = &pipelineRenderingInfo,
         .flags               = 0,
-        .stageCount          = static_cast<uint32_t>(state->shaderInfo.size()),
-        .pStages             = state->shaderInfo.data(),
+        .stageCount          = static_cast<uint32_t>(state.shaderInfo.size()),
+        .pStages             = state.shaderInfo.data(),
         .pVertexInputState   = &vertexInput,
-        .pInputAssemblyState = &state->inputAssembly,
+        .pInputAssemblyState = &state.inputAssembly,
         .pTessellationState  = VK_NULL_HANDLE,
-        .pViewportState      = &state->viewportState,
-        .pRasterizationState = &state->rasterizer,
-        .pMultisampleState   = &state->multisampling,
+        .pViewportState      = &state.viewportState,
+        .pRasterizationState = &state.rasterizer,
+        .pMultisampleState   = &state.multisampling,
         .pDepthStencilState  = &depthStencil,
         .pColorBlendState    = &colorBlending,
         .pDynamicState       = &dynamicState,
-        .layout              = pipeline->layout,
+        .layout              = layout,
         .renderPass          = VK_NULL_HANDLE,
         .subpass             = 0,
         .basePipelineHandle  = VK_NULL_HANDLE,
         .basePipelineIndex   = 0
     };
 
-    return (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, VK_NULL_HANDLE, &pipeline->handle) == VK_SUCCESS);
+    return (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, VK_NULL_HANDLE, &handle) == VK_SUCCESS);
 }
 
 
-void GraphicsPipeline_destroy(GraphicsPipeline* pipeline, VkDevice device)
+void GraphicsPipeline::destroy(VkDevice device)
 {
-    if(pipeline->handle)
-    {
-        vkDestroyPipeline(device, pipeline->handle, VK_NULL_HANDLE);
-        vkDestroyPipelineLayout(device, pipeline->layout, VK_NULL_HANDLE);
-        vkDestroyDescriptorSetLayout(device, pipeline->descriptorSetLayout, VK_NULL_HANDLE);
+    if(handle)
+        vkDestroyPipeline(device, handle, VK_NULL_HANDLE);
 
-        pipeline->handle              = VK_NULL_HANDLE;
-        pipeline->layout              = VK_NULL_HANDLE;
-        pipeline->descriptorSetLayout = VK_NULL_HANDLE;
-    }
+    if(layout)
+        vkDestroyPipelineLayout(device, layout, VK_NULL_HANDLE);
+
+    if(descriptorSetLayout)
+        vkDestroyDescriptorSetLayout(device, descriptorSetLayout, VK_NULL_HANDLE);
+
+    handle              = VK_NULL_HANDLE;
+    layout              = VK_NULL_HANDLE;
+    descriptorSetLayout = VK_NULL_HANDLE; 
 }
