@@ -17,10 +17,8 @@ bool DescriptorPool::create(std::span<const VkDescriptorPoolSize> poolSizes, VkD
 
     if(result)
     {
-        types.resize(poolSizes.size());
-
-        for (uint32_t i = 0; i < poolSizes.size(); ++i)
-            types[i] = poolSizes[i].type;
+        for(const auto& poolSize : poolSizes)
+            types.push_back(poolSize.type);
 
         return true;
     }

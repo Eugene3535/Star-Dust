@@ -97,13 +97,13 @@ namespace
                                               VK_IMAGE_TILING_OPTIMAL, 
                                               VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 
                                               VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
-                                              &view->depthImage, 
-                                              &view->depthImageMemory, 
+                                              &view->depth.image, 
+                                              &view->depth.imageMemory, 
                                               view->context->GPU, 
                                               device);
 
             if(result)
-                return vktools::create_image_view_2D(device, view->depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, &view->depthImageView);
+                return vktools::create_image_view_2D(device, view->depth.image, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, &view->depth.imageView);
         }
 
         return result;
@@ -220,14 +220,14 @@ bool MainView::recreate(bool useDepth) noexcept
 
                 if (useDepth)
                 {
-                    if (depthImageView)
-                        vkDestroyImageView(device, depthImageView, VK_NULL_HANDLE);
+                    if (depth.imageView)
+                        vkDestroyImageView(device, depth.imageView, VK_NULL_HANDLE);
 
-                    if (depthImage)
-                        vkDestroyImage(device, depthImage, VK_NULL_HANDLE);
+                    if (depth.image)
+                        vkDestroyImage(device, depth.image, VK_NULL_HANDLE);
 
-                    if (depthImageMemory)
-                        vkFreeMemory(device, depthImageMemory, VK_NULL_HANDLE);
+                    if (depth.imageMemory)
+                        vkFreeMemory(device, depth.imageMemory, VK_NULL_HANDLE);
 
                     if(!create_depth_resources(this))
                         return false;
@@ -252,14 +252,14 @@ void MainView::destroy() noexcept
         vkDestroySwapchainKHR(device, swapchain, VK_NULL_HANDLE);
     }
 
-    if (depthImageView)
-        vkDestroyImageView(device, depthImageView, VK_NULL_HANDLE);
+    if (depth.imageView)
+        vkDestroyImageView(device, depth.imageView, VK_NULL_HANDLE);
 
-    if (depthImage)
-        vkDestroyImage(device, depthImage, VK_NULL_HANDLE);
+    if (depth.image)
+        vkDestroyImage(device, depth.image, VK_NULL_HANDLE);
 
-    if (depthImageMemory)
-        vkFreeMemory(device, depthImageMemory, VK_NULL_HANDLE);
+    if (depth.imageMemory)
+        vkFreeMemory(device, depth.imageMemory, VK_NULL_HANDLE);
 
     if(surface)
         vkDestroySurfaceKHR(context->instance, surface, VK_NULL_HANDLE);

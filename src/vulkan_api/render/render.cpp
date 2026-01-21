@@ -71,7 +71,7 @@ bool render_begin(VkCommandBuffer cmd, const MainView* view, uint32_t imageIndex
     {
         .sType              = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO_KHR,
         .pNext              = VK_NULL_HANDLE,
-        .imageView          = view->depthImageView,
+        .imageView          = view->depth.imageView,
         .imageLayout        = VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL,
         .resolveMode        = VK_RESOLVE_MODE_NONE,
         .resolveImageView   = VK_NULL_HANDLE,
