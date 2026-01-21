@@ -7,7 +7,7 @@
 #include "vulkan_api/presentation/MainView.hpp"
 #include "vulkan_api/pipeline/stages/shader/Shader.hpp"
 #include "vulkan_api/pipeline/stages/shader/VertexInputState.hpp"
-#include "vulkan_api/pipeline/stages/uniform/descriptor_set_layout.hpp"
+#include "vulkan_api/pipeline/stages/uniform/DescriptorSetLayout.hpp"
 
 
 struct GraphicsPipeline
@@ -20,7 +20,6 @@ struct GraphicsPipeline
         void setupRasterization(VkPolygonMode mode)                                                                          noexcept;
         void setupMultisampling()                                                                                            noexcept;
         void setupColorBlending(VkBool32 enabled)                                                                            noexcept;
-        void setupDescriptorSetLayout(const DescriptorSetLayout* uniformDescriptorSet)                                       noexcept;
 
         std::vector<VkPipelineShaderStageCreateInfo> shaderInfo;
         VertexInputState                             vertexInputState;
@@ -32,8 +31,8 @@ struct GraphicsPipeline
         DescriptorSetLayout                          layoutInfo;
     };
 
-    bool create(const State& state, const MainView& view);
-    void destroy(VkDevice device);
+    bool create(const State& state, const MainView& view) noexcept;
+    void destroy(VkDevice device) noexcept;
 
     VkDescriptorSetLayout descriptorSetLayout;
     VkPipelineLayout      layout;

@@ -9,7 +9,7 @@
 
 struct VertexInputState
 {
-    enum AttributeType
+    enum AttributeType : uint32_t
     {
         Float1,
         Float2,

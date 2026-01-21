@@ -1,9 +1,9 @@
 #include "vulkan_api/pipeline/stages/shader/VertexInputState.hpp"
 
 
-static uint32_t shader_attribute_type_to_component_count(const VertexInputState::AttributeType type);
-static size_t   shader_attribute_type_sizeof(const VertexInputState::AttributeType type);
-static VkFormat shader_attribute_type_to_vk_format(const VertexInputState::AttributeType type);
+static uint32_t shader_attribute_type_to_component_count(const VertexInputState::AttributeType type) noexcept;
+static size_t   shader_attribute_type_sizeof(const VertexInputState::AttributeType type)             noexcept;
+static VkFormat shader_attribute_type_to_vk_format(const VertexInputState::AttributeType type)       noexcept;
 
 
 
@@ -47,7 +47,7 @@ VkPipelineVertexInputStateCreateInfo VertexInputState::getInfo() const noexcept
 
 
 
-uint32_t shader_attribute_type_to_component_count(const VertexInputState::AttributeType type)
+uint32_t shader_attribute_type_to_component_count(const VertexInputState::AttributeType type) noexcept
 {
     switch (type)
     {
@@ -72,7 +72,7 @@ uint32_t shader_attribute_type_to_component_count(const VertexInputState::Attrib
 }
 
 
-size_t shader_attribute_type_sizeof(const VertexInputState::AttributeType type)
+size_t shader_attribute_type_sizeof(const VertexInputState::AttributeType type) noexcept
 {
     switch (type)
     {
@@ -93,7 +93,7 @@ size_t shader_attribute_type_sizeof(const VertexInputState::AttributeType type)
 }
 
 
-VkFormat shader_attribute_type_to_vk_format(const VertexInputState::AttributeType type)
+VkFormat shader_attribute_type_to_vk_format(const VertexInputState::AttributeType type) noexcept
 {
     switch (type)
     {

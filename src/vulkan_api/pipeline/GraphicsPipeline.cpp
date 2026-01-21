@@ -83,14 +83,7 @@ void GraphicsPipeline::State::setupColorBlending(VkBool32 enabled) noexcept
 }
 
 
-void GraphicsPipeline::State::setupDescriptorSetLayout(const DescriptorSetLayout* uniformDescriptorSet) noexcept
-{
-    memcpy(&layoutInfo, uniformDescriptorSet, sizeof(DescriptorSetLayout));
-}
-
-
-
-bool GraphicsPipeline::create(const GraphicsPipeline::State& state, const MainView& view)
+bool GraphicsPipeline::create(const GraphicsPipeline::State& state, const MainView& view) noexcept
 {
     VkPhysicalDevice GPU    = view.context->GPU;
     VkDevice         device = view.context->device;
@@ -138,7 +131,7 @@ bool GraphicsPipeline::create(const GraphicsPipeline::State& state, const MainVi
         .pDynamicStates    = dynamicStates
     };
 
-    const VkDescriptorSetLayoutCreateInfo layoutInfo = DescriptorSetLayout_getInfo(&state.layoutInfo);
+    const VkDescriptorSetLayoutCreateInfo layoutInfo = state.layoutInfo.getInfo();
 
     if (vkCreateDescriptorSetLayout(device, &layoutInfo, VK_NULL_HANDLE, &descriptorSetLayout) != VK_SUCCESS)
         return false;
@@ -207,7 +200,7 @@ bool GraphicsPipeline::create(const GraphicsPipeline::State& state, const MainVi
 }
 
 
-void GraphicsPipeline::destroy(VkDevice device)
+void GraphicsPipeline::destroy(VkDevice device) noexcept
 {
     if(handle)
         vkDestroyPipeline(device, handle, VK_NULL_HANDLE);

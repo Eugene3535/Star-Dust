@@ -9,10 +9,10 @@
 #include "app/Application.hpp"
 
 
-static bool init_vulkan(VulkanApp* app);
-static void update_uniform_buffer(VulkanApp* app, vec3s position, float angle);
-static void write_command_buffer(VulkanApp* app, VkCommandBuffer cmd, VkDescriptorSet descriptorSet);
-static void draw_frame(VulkanApp* app);
+static bool init_vulkan(VulkanApp* app) noexcept;
+static void update_uniform_buffer(VulkanApp* app, vec3s position, float angle) noexcept;
+static void write_command_buffer(VulkanApp* app, VkCommandBuffer cmd, VkDescriptorSet descriptorSet) noexcept;
+static void draw_frame(VulkanApp* app) noexcept;
 
 
 #define FPS_MEASUREMENT
@@ -166,7 +166,7 @@ void VulkanApp::destroy() noexcept
 }
 
 
-bool init_vulkan(VulkanApp* app)
+bool init_vulkan(VulkanApp* app) noexcept
 {
     glfwGetFramebufferSize(app->window, &app->width, &app->height);
 
@@ -195,8 +195,8 @@ bool init_vulkan(VulkanApp* app)
             VertexInputState::Float2
         };
 
-        DescriptorSetLayout uniformDescriptors = {0};
-        DescriptorSetLayout_addDescriptor(&uniformDescriptors, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
+        DescriptorSetLayout uniformDescriptors;
+        uniformDescriptors.addDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
 
         GraphicsPipeline::State pipelineState;
 
@@ -206,11 +206,10 @@ bool init_vulkan(VulkanApp* app)
         pipelineState.setupRasterization(VK_POLYGON_MODE_FILL);
         pipelineState.setupMultisampling();
         pipelineState.setupColorBlending(VK_FALSE);
-        pipelineState.setupDescriptorSetLayout(&uniformDescriptors);
+        pipelineState.layoutInfo = uniformDescriptors;
 
         bool result = app->pipeline.create(pipelineState, app->view);
             
-		free(uniformDescriptors.bindings);
 		shaders[0].destroy(device);
 		shaders[1].destroy(device);
 
@@ -317,7 +316,7 @@ bool init_vulkan(VulkanApp* app)
 }
 
 
-void update_uniform_buffer(VulkanApp* app, vec3s position, float angle)
+void update_uniform_buffer(VulkanApp* app, vec3s position, float angle) noexcept
 {
 	vec3s axis = { 1.0f, 0.3f, 0.5f };
 
@@ -331,7 +330,7 @@ void update_uniform_buffer(VulkanApp* app, vec3s position, float angle)
 }
 
 
-void write_command_buffer(VulkanApp* app, VkCommandBuffer cmd, VkDescriptorSet descriptorSet)
+void write_command_buffer(VulkanApp* app, VkCommandBuffer cmd, VkDescriptorSet descriptorSet) noexcept
 {
     VkDeviceSize offsets[] = {0};
     VkBuffer vertexBuffers[] = {app->vertices.handle};
@@ -343,7 +342,7 @@ void write_command_buffer(VulkanApp* app, VkCommandBuffer cmd, VkDescriptorSet d
 }
 
 
-void draw_frame(VulkanApp* app)
+void draw_frame(VulkanApp* app) noexcept
 {
     uint32_t frame  = app->sync.currentFrame;
     VkDevice device = app->context.device;
