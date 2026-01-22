@@ -1,10 +1,10 @@
 #include "vulkan_api/presentation/MainView.hpp"
 
-#include "vulkan_api/render/Render.hpp"
+#include "vulkan_api/render/Renderer.hpp"
 
 
 // TODO add clear color value
-bool Render::begin(VkCommandBuffer cmd, const MainView* view, uint32_t imageIndex) noexcept
+bool Renderer::begin(VkCommandBuffer cmd, const MainView* view, uint32_t imageIndex) noexcept
 {
     const VkCommandBufferBeginInfo beginInfo = 
     {
@@ -66,7 +66,7 @@ bool Render::begin(VkCommandBuffer cmd, const MainView* view, uint32_t imageInde
         .resolveImageLayout = VK_IMAGE_LAYOUT_UNDEFINED,
         .loadOp             = VK_ATTACHMENT_LOAD_OP_CLEAR,
         .storeOp            = VK_ATTACHMENT_STORE_OP_STORE,
-        .clearValue         = {{ 0.f, 0.f, 0.f, 1.f }}
+        .clearValue         = clearColor
     };
 
     const VkRenderingAttachmentInfoKHR depthAttachmentInfo = 
@@ -123,7 +123,7 @@ bool Render::begin(VkCommandBuffer cmd, const MainView* view, uint32_t imageInde
 }
 
 
-bool Render::end(VkCommandBuffer cmd, const MainView* view, uint32_t imageIndex) noexcept
+bool Renderer::end(VkCommandBuffer cmd, const MainView* view, uint32_t imageIndex) noexcept
 {
     vkCmdEndRendering(cmd);
 

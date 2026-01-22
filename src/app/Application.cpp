@@ -401,7 +401,7 @@ void draw_frame(VulkanApp* app) noexcept
 		return;
     }
 
-    if(!Render::begin(commandBuffer, &app->view, imageIndex))
+    if(!app->renderer.begin(commandBuffer, &app->view, imageIndex))
         return;
 
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, app->pipeline.handle);
@@ -414,7 +414,7 @@ void draw_frame(VulkanApp* app) noexcept
         write_command_buffer(app, commandBuffer, descriptorSet);
     }
 
-    if(!Render::end(commandBuffer, &app->view, imageIndex))
+    if(!app->renderer.end(commandBuffer, &app->view, imageIndex))
         return;
 
     VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};

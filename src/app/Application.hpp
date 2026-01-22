@@ -6,8 +6,8 @@
 #include "vulkan_api/command_pool/CommandBufferPool.hpp"
 #include "vulkan_api/sync/SyncManager.hpp"
 #include "vulkan_api/texture/texture2D.hpp"
-#include "vulkan_api/buffers//BufferHolder.hpp"
-#include "vulkan_api/render/render.hpp"
+#include "vulkan_api/buffers/BufferHolder.hpp"
+#include "vulkan_api/render/Renderer.hpp"
 #include "app/camera/camera.hpp"
 
 
@@ -32,6 +32,8 @@ struct VulkanApp
     BufferHolder bufferHolder;
     Buffer vertices;
     Buffer indices;
+
+    Renderer renderer;
 
     bool framebufferResized;
     int32_t width;
