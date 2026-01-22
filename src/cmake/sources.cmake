@@ -10,8 +10,8 @@ set(SRC_FILES
 	src/vulkan_api/command_pool/CommandBufferPool.cpp
 	src/vulkan_api/sync/SyncManager.cpp
 	src/vulkan_api/texture/Texture2D.cpp
-	src/vulkan_api/buffers/buffer_holder.cpp
-	src/vulkan_api/render/render.cpp
+	src/vulkan_api/buffers/BufferHolder.cpp
+	src/vulkan_api/render/Render.cpp
 	src/app/camera/Camera.cpp
 	src/app/Application.cpp
 	src/main.cpp
@@ -29,8 +29,8 @@ set(HDR_FILES
 	src/vulkan_api/command_pool/CommandBufferPool.hpp
 	src/vulkan_api/sync/SyncManager.hpp
 	src/vulkan_api/texture/Texture2D.hpp
-	src/vulkan_api/buffers/buffer_holder.hpp
-	src/vulkan_api/render/render.hpp
+	src/vulkan_api/buffers/BufferHolder.hpp
+	src/vulkan_api/render/Render.hpp
 	src/app/camera/Camera.hpp
 	src/app/Application.hpp
 )

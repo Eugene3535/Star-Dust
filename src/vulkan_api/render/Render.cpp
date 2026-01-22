@@ -1,8 +1,10 @@
-#include "vulkan_api/render/render.hpp"
+#include "vulkan_api/presentation/MainView.hpp"
+
+#include "vulkan_api/render/Render.hpp"
 
 
 // TODO add clear color value
-bool render_begin(VkCommandBuffer cmd, const MainView* view, uint32_t imageIndex)
+bool Render::begin(VkCommandBuffer cmd, const MainView* view, uint32_t imageIndex) noexcept
 {
     const VkCommandBufferBeginInfo beginInfo = 
     {
@@ -121,7 +123,7 @@ bool render_begin(VkCommandBuffer cmd, const MainView* view, uint32_t imageIndex
 }
 
 
-bool render_end(VkCommandBuffer cmd, const MainView* view, uint32_t imageIndex)
+bool Render::end(VkCommandBuffer cmd, const MainView* view, uint32_t imageIndex) noexcept
 {
     vkCmdEndRendering(cmd);
 

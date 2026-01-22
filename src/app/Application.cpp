@@ -151,7 +151,7 @@ void VulkanApp::destroy() noexcept
 {
 	VkDevice device = context.device;
 
-	BufferHolder_destroy(&bufferHolder, device);
+	bufferHolder.destroy(device);
 	texture.destroy(device);
 	sync.destroy(device);
 	commandPool.destroy(device);
@@ -261,7 +261,7 @@ bool init_vulkan(VulkanApp* app) noexcept
     }
 
 	{
-	    const float vertices[120] = 
+	    const std::array<float, 120> vertices = 
         {
             -0.5f, -0.5f, 0.5f, 0.f, 0.f,
              0.5f, -0.5f, 0.5f, 1.f, 0.f,
@@ -294,7 +294,7 @@ bool init_vulkan(VulkanApp* app) noexcept
             -0.5f, -0.5f,  0.5f, 0.f, 1.f
         };
 
-        const uint32_t indices[36] = 
+        const std::array<uint32_t, 36> indices = 
         {
             0,  1,  2,  2,  3,  0,   // front
             4,  5,  6,  6,  7,  4,   // left
@@ -304,8 +304,8 @@ bool init_vulkan(VulkanApp* app) noexcept
             20, 21, 22, 22, 23, 20   // bottom
         };
 
-		app->vertices = BufferHolder_allocate(&app->bufferHolder, vertices, 120, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, &app->context, app->commandPool.handle);
-		app->indices = BufferHolder_allocate(&app->bufferHolder, indices, 36, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, &app->context, app->commandPool.handle);
+		app->vertices = app->bufferHolder.allocate<float>(vertices, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, &app->context, app->commandPool.handle);
+		app->indices = app->bufferHolder.allocate<uint32_t>(indices, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, &app->context, app->commandPool.handle);
 
 		if(!app->vertices.handle)
 			return false;
@@ -401,7 +401,7 @@ void draw_frame(VulkanApp* app) noexcept
 		return;
     }
 
-    if(!render_begin(commandBuffer, &app->view, imageIndex))
+    if(!Render::begin(commandBuffer, &app->view, imageIndex))
         return;
 
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, app->pipeline.handle);
@@ -414,7 +414,7 @@ void draw_frame(VulkanApp* app) noexcept
         write_command_buffer(app, commandBuffer, descriptorSet);
     }
 
-    if(!render_end(commandBuffer, &app->view, imageIndex))
+    if(!Render::end(commandBuffer, &app->view, imageIndex))
         return;
 
     VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};

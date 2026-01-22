@@ -6,7 +6,7 @@
 #include "vulkan_api/command_pool/CommandBufferPool.hpp"
 #include "vulkan_api/sync/SyncManager.hpp"
 #include "vulkan_api/texture/texture2D.hpp"
-#include "vulkan_api/buffers//buffer_holder.hpp"
+#include "vulkan_api/buffers//BufferHolder.hpp"
 #include "vulkan_api/render/render.hpp"
 #include "app/camera/camera.hpp"
 
