@@ -1,4 +1,5 @@
 #include <cstring>
+#include <array>
 
 #include <cglm/struct/mat4.h>
 
@@ -9,7 +10,7 @@
 
 void GraphicsPipeline::State::setupShaderStages(std::span<const Shader> shaders, std::span<const VertexInputState::AttributeType> attributes) noexcept
 {
-    for(const auto shader : shaders)
+    for(const auto& shader : shaders)
         shaderInfo.emplace_back(shader.getInfo());
 
     vertexInputState.create(attributes);
@@ -116,7 +117,7 @@ bool GraphicsPipeline::create(const GraphicsPipeline::State& state, const MainVi
         .pAttachments    = &state.colorBlending
     };
 
-    const VkDynamicState dynamicStates[] = 
+    const std::array<VkDynamicState, 2> dynamicStates = 
     {
         VK_DYNAMIC_STATE_VIEWPORT,
         VK_DYNAMIC_STATE_SCISSOR
@@ -127,8 +128,8 @@ bool GraphicsPipeline::create(const GraphicsPipeline::State& state, const MainVi
         .sType             = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
         .pNext             = VK_NULL_HANDLE,
         .flags             = 0,
-        .dynamicStateCount = sizeof(dynamicStates) / sizeof(VkDynamicState),
-        .pDynamicStates    = dynamicStates
+        .dynamicStateCount = static_cast<uint32_t>(dynamicStates.size()),
+        .pDynamicStates    = dynamicStates.data()
     };
 
     const VkDescriptorSetLayoutCreateInfo layoutInfo = state.layoutInfo.getInfo();

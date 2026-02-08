@@ -209,9 +209,6 @@ bool init_vulkan(VulkanApp* app) noexcept
 
         bool result = app->pipeline.create(pipelineState, app->view);
             
-		shaders[0].destroy(device);
-		shaders[1].destroy(device);
-
 		if(!result)
 			return false;
 	}
