@@ -1,15 +1,17 @@
 set(MAIN_APP_TARGET_NAME main_app)
 
+file(GLOB_RECURSE APP_SRC_FILES CONFIGURE_DEPENDS
+	${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/*.inl
+	${CMAKE_CURRENT_SOURCE_DIR}/*.hpp
+)
+
 add_executable(${MAIN_APP_TARGET_NAME}
-	MainWindow.cpp
-	MainWindow.hpp
-	main.cpp
+	${APP_SRC_FILES}
 )
 
 source_group("main_app" FILES 
-	MainWindow.cpp
-	MainWindow.hpp
-	main.cpp
+	${APP_SRC_FILES}
 )
 
 target_link_libraries(${MAIN_APP_TARGET_NAME} PRIVATE
@@ -17,10 +19,14 @@ target_link_libraries(${MAIN_APP_TARGET_NAME} PRIVATE
 	vulkan_api
 )
 
+target_include_directories(${MAIN_APP_TARGET_NAME} PRIVATE
+	${CMAKE_CURRENT_SOURCE_DIR}
+)
+
 target_compile_definitions(${MAIN_APP_TARGET_NAME} PRIVATE
     $<$<CONFIG:Debug>:DEBUG>
 	$<$<BOOL:${WIN32}>:GLFW_EXPOSE_NATIVE_WIN32>
-	$<$<BOOL:${UNIX}>:GLFW_EXPOSE_NATIVE_X11>
+	$<$<BOOL:${LINIX}>:GLFW_EXPOSE_NATIVE_X11>
 )
 
 

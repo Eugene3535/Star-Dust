@@ -9,6 +9,7 @@ compile_shaders(${CMAKE_CURRENT_SOURCE_DIR}/src/shaders ${CMAKE_BINARY_DIR}/shad
 
 file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
 	${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/*.inl
 	${CMAKE_CURRENT_SOURCE_DIR}/*.hpp
 )
 
@@ -37,6 +38,17 @@ target_sources(${VULKAN_API_TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/inc
 target_sources(${VULKAN_API_TARGET_NAME} PRIVATE ${SHADER_FILES})
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${SRC_FILES})
 
+target_link_libraries(${VULKAN_API_TARGET_NAME} 
+PRIVATE
+	$<$<BOOL:${UNIX}>:xcb>
+	${Vulkan_LIBRARIES}
+	cglm::cglm
+	spdlog::spdlog
+	magic_enum::magic_enum
+PUBLIC
+	graphics_api
+)
+
 target_include_directories(${VULKAN_API_TARGET_NAME}
 PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -44,14 +56,6 @@ PRIVATE
 	${Vulkan_INCLUDE_DIRS}
 	${EXTERNAL_SOURCE_DIR}/stb
 	${CMAKE_CURRENT_SOURCE_DIR}/src
-)
-
-target_link_libraries(${VULKAN_API_TARGET_NAME} PRIVATE
-	$<$<BOOL:${UNIX}>:xcb>
-	${Vulkan_LIBRARIES}
-	cglm::cglm
-	spdlog::spdlog
-	magic_enum::magic_enum
 )
 
 target_compile_definitions(${VULKAN_API_TARGET_NAME} PRIVATE

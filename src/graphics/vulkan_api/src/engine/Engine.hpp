@@ -17,8 +17,8 @@ class Engine
 public:
     Engine() noexcept;
 
-    bool createContext()                       noexcept;
-    bool createMainView(uint64_t windowHandle) noexcept;
+    bool createContext()                   noexcept;
+    bool createView(uint64_t windowHandle) noexcept;
 
     bool createPipeline() noexcept;
     void drawFrame() noexcept;

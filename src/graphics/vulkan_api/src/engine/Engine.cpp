@@ -46,7 +46,7 @@ bool Engine::createContext() noexcept
 }
 
 
-bool Engine::createMainView(uint64_t windowHandle) noexcept
+bool Engine::createView(uint64_t windowHandle) noexcept
 {
     if (!m_view.create(windowHandle))
         return false;

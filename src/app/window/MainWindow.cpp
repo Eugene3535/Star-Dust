@@ -1,7 +1,7 @@
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
 
-#include "MainWindow.hpp"
+#include "window/MainWindow.hpp"
 
 // TODO remove magic numbers
 static float lastX = 400;
@@ -24,9 +24,6 @@ MainWindow::~MainWindow()
 
 bool MainWindow::create(const char* title, int32_t width, int32_t height) noexcept
 {
-    if (!m_api.init())
-        return false;
-
     if (!m_api.createContext())
         return false;
 
@@ -55,10 +52,7 @@ bool MainWindow::create(const char* title, int32_t width, int32_t height) noexce
     if (!windowHandle)
         return false;
 
-    if (!m_api.createMainView(windowHandle))
-        return false;
-
-    if (!m_api.init())
+    if (!m_api.createView(windowHandle))
         return false;
 
     m_api.resize(width, height);

@@ -1,0 +1,82 @@
+#include "engine/Engine.hpp"
+#include "VulkanApi.hpp"
+
+
+VulkanApi::VulkanApi() noexcept
+{
+
+}
+
+
+VulkanApi::~VulkanApi()
+{
+    if (m_engine)
+        m_engine->destroy();
+}
+
+
+
+bool VulkanApi::createContext() noexcept
+{
+    if (m_engine)
+        return true;
+
+    auto engine = std::make_unique<Engine>();
+
+    if (engine->createContext())
+    {
+        m_engine.swap(engine);
+
+        return true;
+    }
+
+    return false;
+}
+
+
+bool VulkanApi::createView(uint64_t windowHandle) noexcept
+{
+    if (m_engine)
+    {
+        if (m_engine->createView(windowHandle))
+            return m_engine->createPipeline(); // tmp solution
+    }
+
+    return false;
+}
+
+
+void VulkanApi::drawFrame() const noexcept
+{
+    if (m_engine)
+    {
+        m_engine->drawFrame();
+    }
+}
+
+
+void VulkanApi::processMouseMovement(float xpos, float ypos) noexcept
+{
+    if (m_engine)
+    {
+        m_engine->camera.processMouseMovement(xpos, ypos);
+    }
+}
+
+
+void VulkanApi::processKeyboard(int direction, float deltaTime) noexcept
+{
+    if (m_engine)
+    {
+        m_engine->camera.processKeyboard((Camera::Direction)direction, deltaTime);
+    }
+}
+
+
+void VulkanApi::resize(int width, int height) noexcept
+{
+    if (m_engine)
+    {
+        m_engine->resize(width, height);
+    }
+}

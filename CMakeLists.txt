@@ -52,8 +52,7 @@ if(WIN32)
 	add_definitions(-DNOMINMAX)
 endif()
 
-add_subdirectory(${PROJECT_SOURCE_DIR}/src/vulkan_api)
-add_subdirectory(${PROJECT_SOURCE_DIR}/src/app)
+add_subdirectory(${PROJECT_SOURCE_DIR}/src)
 
 if(MSVC)
 	set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT main_app)
