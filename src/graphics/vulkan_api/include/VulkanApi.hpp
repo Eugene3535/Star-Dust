@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "Export.hpp"
+#include "VulkanApiExport.hpp"
 #include "GraphicsApi.hpp"
 
 
@@ -10,7 +10,7 @@ class VK_API VulkanApi final:
     public GraphicsApi
 {
 public:
-    VulkanApi() noexcept;
+    VulkanApi(Camera& camera) noexcept;
     ~VulkanApi();
 
     bool createContext() noexcept;

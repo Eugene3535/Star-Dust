@@ -1,6 +1,7 @@
 #include <array>
 
 #include <cglm/struct/affine-pre.h>
+#include <cglm/struct/cam.h>
 #include "spdlog/spdlog.h"
 #include <spdlog/sinks/basic_file_sink.h>
 
@@ -26,7 +27,8 @@ static const vec3s cubePositions[10] =
 };
 
 
-Engine::Engine() noexcept
+Engine::Engine(Camera& camera) noexcept:
+    m_camera(camera)
 {
 
 }
@@ -288,7 +290,7 @@ void Engine::drawFrame() noexcept
     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline.layout, 0, 1, &descriptorSet, 0, VK_NULL_HANDLE);
 
     mat4s projection = glms_perspective(glm_rad(60.f), m_width / (float)m_height, 0.1f, 100.f);
-    mat4s viewMatrix  = camera.getViewMatrix();
+    mat4s viewMatrix  = m_camera.getViewMatrix();
     vec3s axis = { 1.0f, 0.3f, 0.5f };
 
 //  update matrices

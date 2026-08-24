@@ -2,11 +2,13 @@
 
 #include <cglm/struct/vec3.h>
 #include <cglm/struct/mat4.h>
-#include <cglm/struct/cam.h>
-#include <cglm/util.h>
 
-struct Camera
+#include "GfxApiExport.hpp"
+
+
+class GFX_API Camera
 {
+public:
     enum Direction
     {
         FORWARD,
@@ -17,7 +19,7 @@ struct Camera
 
     Camera() noexcept;
 
-    void processKeyboard(Camera::Direction direction, float deltaTime) noexcept;
+    void processKeyboard(Direction direction, float deltaTime) noexcept;
     void processMouseMovement(float xoffset, float yoffset) noexcept;
     mat4s getViewMatrix() noexcept;
 

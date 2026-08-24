@@ -2,7 +2,8 @@
 #include "VulkanApi.hpp"
 
 
-VulkanApi::VulkanApi() noexcept
+VulkanApi::VulkanApi(Camera& camera) noexcept:
+    GraphicsApi(camera)
 {
 
 }
@@ -21,7 +22,7 @@ bool VulkanApi::createContext() noexcept
     if (m_engine)
         return true;
 
-    auto engine = std::make_unique<Engine>();
+    auto engine = std::make_unique<Engine>(m_camera);
 
     if (engine->createContext())
     {
@@ -59,7 +60,7 @@ void VulkanApi::processMouseMovement(float xpos, float ypos) noexcept
 {
     if (m_engine)
     {
-        m_engine->camera.processMouseMovement(xpos, ypos);
+        m_camera.processMouseMovement(xpos, ypos);
     }
 }
 
@@ -68,7 +69,7 @@ void VulkanApi::processKeyboard(int direction, float deltaTime) noexcept
 {
     if (m_engine)
     {
-        m_engine->camera.processKeyboard((Camera::Direction)direction, deltaTime);
+        m_camera.processKeyboard((Camera::Direction)direction, deltaTime);
     }
 }
 

@@ -9,7 +9,8 @@ static float lastY = 300;
 
 
 MainWindow::MainWindow() noexcept:
-    m_window(nullptr)
+    m_window(nullptr),
+    m_api(m_camera)
 {
 
 }
@@ -35,6 +36,7 @@ bool MainWindow::create(const char* title, int32_t width, int32_t height) noexce
         {
             glfwSetWindowUserPointer(m_window, static_cast<void*>(&m_api));
             glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            glfwSetCursorPos(m_window, width * 0.5, height * 0.5);
             initCallbacks();
         }
     }

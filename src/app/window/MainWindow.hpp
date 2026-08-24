@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cstdint>
+#include <memory>
 
 #include "VulkanApi.hpp"
 
@@ -11,12 +11,13 @@ public:
     MainWindow() noexcept;
     ~MainWindow();
 
-    bool create(const char* title, int32_t width, int32_t height) noexcept;
+    bool create(const char* title, int width, int height) noexcept;
     int run() noexcept;
 
 private:
     void initCallbacks() noexcept;
 
     struct GLFWwindow* m_window;
+    Camera m_camera;
 	VulkanApi m_api;
 };

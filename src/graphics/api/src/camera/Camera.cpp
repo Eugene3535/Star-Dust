@@ -1,3 +1,6 @@
+#include <cglm/struct/cam.h>
+#include <cglm/util.h>
+
 #include "camera/Camera.hpp"
 
 
@@ -68,11 +71,12 @@ void Camera::processMouseMovement(float xoffset, float yoffset) noexcept
     pitch += yoffset;
 
 //  make sure that when pitch is out of bounds, screen doesn't get flipped
-    if (pitch > 89.f)
-        pitch = 89.f;
+    yaw = fmod(yaw, 360.f);
 
-    if (pitch < -89.f)
-        pitch = -89.f;
+    if (yaw < 0.f)
+        yaw += 360.f;
+
+    pitch = glm_clamp(pitch, -89.f, 89.f);
 
 //  update Front, Right and Up Vectors using the updated Euler angles
     update_camera_vectors(this);

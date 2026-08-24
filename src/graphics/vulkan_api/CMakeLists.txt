@@ -30,11 +30,11 @@ include(GenerateExportHeader)
 generate_export_header(${VULKAN_API_TARGET_NAME}
     BASE_NAME VULKAN_API
     EXPORT_MACRO_NAME VK_API
-    EXPORT_FILE_NAME ${CMAKE_CURRENT_SOURCE_DIR}/include/Export.hpp
+    EXPORT_FILE_NAME ${CMAKE_CURRENT_SOURCE_DIR}/include/VulkanApiExport.hpp
     STATIC_DEFINE VK_API_STATIC_DEFINE
 )
 
-target_sources(${VULKAN_API_TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/Export.hpp)
+target_sources(${VULKAN_API_TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/VulkanApiExport.hpp)
 target_sources(${VULKAN_API_TARGET_NAME} PRIVATE ${SHADER_FILES})
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${SRC_FILES})
 
@@ -42,7 +42,6 @@ target_link_libraries(${VULKAN_API_TARGET_NAME}
 PRIVATE
 	$<$<BOOL:${UNIX}>:xcb>
 	${Vulkan_LIBRARIES}
-	cglm::cglm
 	spdlog::spdlog
 	magic_enum::magic_enum
 PUBLIC

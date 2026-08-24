@@ -15,7 +15,7 @@
 class Engine
 {
 public:
-    Engine() noexcept;
+    Engine(Camera& camera) noexcept;
 
     bool createContext()                   noexcept;
     bool createView(uint64_t windowHandle) noexcept;
@@ -49,7 +49,7 @@ public:
     int32_t m_width;
     int32_t m_height;
 
-    Camera camera;
+    Camera& m_camera;
 
     FileProvider m_fileProvider;
 };
