@@ -13,7 +13,6 @@
 
 static FileProvider* s_instance;
 
-
 static std::filesystem::path get_root_path() noexcept
 {
 #ifdef _WIN32
@@ -62,10 +61,18 @@ static std::filesystem::path get_root_path() noexcept
 }
 
 
-FileProvider::FileProvider() noexcept
+FileProvider::FileProvider(const char* argv) noexcept
 {
     assert(s_instance == nullptr);
     s_instance = this;
+
+    std::error_code ec;
+    std::filesystem::path exePath = std::filesystem::canonical(argv, ec);
+
+    if (!ec)
+        m_exeDir = exePath.parent_path();
+    else
+        m_exeDir = get_root_path();
 }
 
 
@@ -73,18 +80,13 @@ std::filesystem::path FileProvider::findPathToFile(const std::string& filename) 
 {
     if (s_instance)
     {
-        auto& exeDir = s_instance->m_exeDir;
+        std::filesystem::path resFolder = s_instance->m_exeDir / "res";
 
-        if (exeDir.empty())
-            exeDir = get_root_path();
-
-        const std::filesystem::path resFolder = exeDir / "res";
-
-        if (std::filesystem::exists(resFolder))
+        if(std::filesystem::exists(resFolder))
         {
             for (const auto& file : std::filesystem::recursive_directory_iterator(resFolder))
-                if (file.path().filename() == filename)
-                    return file.path();
+                if (file.path().filename() == filename)    
+                    return file.path();            
         }
     }
 

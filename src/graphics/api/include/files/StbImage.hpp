@@ -3,7 +3,10 @@
 #include <filesystem>
 #include <memory>
 
-struct StbImage
+#include "GfxApiExport.hpp"
+
+
+struct GFX_API StbImage
 {
     enum Mode : int
     {
@@ -19,7 +22,7 @@ struct StbImage
         void operator()(uint8_t* src) noexcept;
     };
 
-    bool loadFromFile(const std::filesystem::path& filepath, int mode) noexcept;
+    bool loadFromFile(const std::filesystem::path& filepath, Mode mode) noexcept;
 
     std::unique_ptr<uint8_t[], StbImageDeleter> pixels;
     int32_t width = 0;

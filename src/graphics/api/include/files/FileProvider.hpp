@@ -3,12 +3,13 @@
 #include <string>
 #include <filesystem>
 
+#include "GfxApiExport.hpp"
 
 
-class FileProvider
+class GFX_API FileProvider
 {
 public:
-    FileProvider() noexcept;
+    explicit FileProvider(const char* argv) noexcept;
 
     static std::filesystem::path findPathToFile(const std::string& filename) noexcept;
 

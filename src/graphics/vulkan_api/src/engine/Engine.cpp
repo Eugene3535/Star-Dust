@@ -67,8 +67,8 @@ bool Engine::createPipeline() noexcept
 	{// Pipeline
 		std::array<Shader, 2> shaders = { Shader(device), Shader(device) };
 
-        const auto vertPath = m_fileProvider.findPathToFile("vertex_shader.spv");
-        const auto fragPath = m_fileProvider.findPathToFile("fragment_shader.spv");
+        const auto vertPath = FileProvider::findPathToFile("vertex_shader.spv");
+        const auto fragPath = FileProvider::findPathToFile("fragment_shader.spv");
 
 		if (!shaders[0].loadFromFile(vertPath, VK_SHADER_STAGE_VERTEX_BIT))
 			return false;
@@ -143,7 +143,7 @@ bool Engine::createPipeline() noexcept
 	{
         const auto imagePath = FileProvider::findPathToFile("container.jpg");
 
-        if(!m_texture.loadFromFile(imagePath, m_commandPool.handle))
+        if (!m_texture.loadFromFile(imagePath, m_commandPool.handle))
             return false;
 
         const std::array<VkDescriptorBufferInfo, 2> bufferInfos = 

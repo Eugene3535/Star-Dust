@@ -39,21 +39,22 @@ if(LINUX)
 	list(APPEND CMAKE_PREFIX_PATH "${EXTERNAL_SOURCE_DIR}/install/linux")
 endif()
 
-if (MSVC)
-    add_compile_options(/utf-8)
-endif()
-
 find_package(glfw3 CONFIG REQUIRED)
 find_package(cglm CONFIG REQUIRED)
 find_package(magic_enum CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 
+if (MSVC)
+    add_compile_options(/utf-8)
+endif()
+
+add_compile_definitions(    
+	$<$<CONFIG:Debug>:DEBUG>
+	CGLM_USE_ANONYMOUS_STRUCT
+)
+
 if(WIN32)
-	add_definitions(-DNOMINMAX)
+	add_compile_definitions(NOMINMAX)
 endif()
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/src)
-
-if(MSVC)
-	set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT main_app)
-endif()

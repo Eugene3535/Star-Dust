@@ -65,11 +65,11 @@ void VulkanApi::processMouseMovement(float xpos, float ypos) noexcept
 }
 
 
-void VulkanApi::processKeyboard(int direction, float deltaTime) noexcept
+void VulkanApi::processKeyboard(Camera::Direction direction, float deltaTime) noexcept
 {
     if (m_engine)
     {
-        m_camera.processKeyboard((Camera::Direction)direction, deltaTime);
+        m_camera.processKeyboard(direction, deltaTime);
     }
 }
 

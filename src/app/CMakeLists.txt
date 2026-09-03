@@ -16,6 +16,7 @@ source_group("main_app" FILES
 
 target_link_libraries(${MAIN_APP_TARGET_NAME} PRIVATE
 	glfw
+	opengl_api
 	vulkan_api
 )
 
@@ -24,7 +25,6 @@ target_include_directories(${MAIN_APP_TARGET_NAME} PRIVATE
 )
 
 target_compile_definitions(${MAIN_APP_TARGET_NAME} PRIVATE
-    $<$<CONFIG:Debug>:DEBUG>
 	$<$<BOOL:${WIN32}>:GLFW_EXPOSE_NATIVE_WIN32>
 	$<$<BOOL:${LINIX}>:GLFW_EXPOSE_NATIVE_X11>
 )
@@ -39,8 +39,7 @@ endif()
 target_compile_features(${MAIN_APP_TARGET_NAME} PUBLIC cxx_std_20)
 
 add_custom_command(TARGET ${MAIN_APP_TARGET_NAME} POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different "${CMAKE_SOURCE_DIR}/res"     "$<TARGET_FILE_DIR:${MAIN_APP_TARGET_NAME}>/res"
-	COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different "${CMAKE_BINARY_DIR}/shaders" "$<TARGET_FILE_DIR:${MAIN_APP_TARGET_NAME}>/res/shaders"
+	COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different "${CMAKE_SOURCE_DIR}/res" "$<TARGET_FILE_DIR:${MAIN_APP_TARGET_NAME}>/res"
 	VERBATIM
 )
 

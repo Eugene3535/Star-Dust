@@ -50,6 +50,4 @@ public:
     int32_t m_height;
 
     Camera& m_camera;
-
-    FileProvider m_fileProvider;
 };
