@@ -33,8 +33,10 @@ target_sources(${OPENGL_API_TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/inc
 target_sources(${OPENGL_API_TARGET_NAME} PRIVATE ${SHADER_FILES})
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${SRC_FILES})
 
-target_link_libraries(${OPENGL_API_TARGET_NAME} PUBLIC
+target_link_libraries(${OPENGL_API_TARGET_NAME} 
+PUBLIC
 	graphics_api
+PRIVATE
 	glad::glad
 )
 

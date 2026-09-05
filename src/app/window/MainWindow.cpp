@@ -10,6 +10,7 @@
 // TODO remove magic numbers
 static float lastX = 400;
 static float lastY = 300;
+static bool vulkanAvailable = true;
 
 
 MainWindow::MainWindow() noexcept:
@@ -31,7 +32,6 @@ bool MainWindow::create(const char* title, int width, int height) noexcept
     if (glfwInit() != GLFW_TRUE)
         return false;
 
-    bool vulkanAvailable = true;
     m_graphicsApi = std::make_unique<VulkanApi>(m_camera);
 
     if (!m_graphicsApi->createContext())
@@ -42,16 +42,16 @@ bool MainWindow::create(const char* title, int width, int height) noexcept
     
     if (vulkanAvailable)
     {
-        if (!createVulkanWindow(title, width, height))
+        if (!createVulkanWindow(width, height))
             return false;
     }
     else
     {
-        if (!createOpenGLWindow(title, width, height))
+        if (!createOpenGLWindow(width, height))
             return false;
     }
 
-    glfwSetWindowUserPointer(m_glfwWindow, static_cast<void*>(m_graphicsApi.get()));
+    glfwSetWindowUserPointer(m_glfwWindow, static_cast<void*>(this));
     glfwSetInputMode(m_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPos(m_glfwWindow, width * 0.5, height * 0.5);
     initCallbacks();
@@ -73,32 +73,31 @@ int MainWindow::run() noexcept
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        if (glfwGetKey(m_glfwWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-            glfwSetWindowShouldClose(m_glfwWindow, true);
-
         if (glfwGetKey(m_glfwWindow, GLFW_KEY_W) == GLFW_PRESS)
-            m_graphicsApi->processKeyboard(Camera::Direction::FORWARD, deltaTime);
+            m_camera.processKeyboard(Camera::Direction::FORWARD, deltaTime);
 
         if (glfwGetKey(m_glfwWindow, GLFW_KEY_S) == GLFW_PRESS)
-            m_graphicsApi->processKeyboard(Camera::Direction::BACKWARD, deltaTime);
+            m_camera.processKeyboard(Camera::Direction::BACKWARD, deltaTime);
 
         if (glfwGetKey(m_glfwWindow, GLFW_KEY_A) == GLFW_PRESS)
-            m_graphicsApi->processKeyboard(Camera::Direction::LEFT, deltaTime);
+            m_camera.processKeyboard(Camera::Direction::LEFT, deltaTime);
 
         if (glfwGetKey(m_glfwWindow, GLFW_KEY_D) == GLFW_PRESS)
-            m_graphicsApi->processKeyboard(Camera::Direction::RIGHT, deltaTime);
+            m_camera.processKeyboard(Camera::Direction::RIGHT, deltaTime);
 
         m_graphicsApi->drawFrame();
 
         glfwPollEvents();
-        glfwSwapBuffers(m_glfwWindow);
+
+        if (!vulkanAvailable)
+            glfwSwapBuffers(m_glfwWindow);
     }
 
     return 0;
 }
 
 
-bool MainWindow::createOpenGLWindow(const char* title, int width, int height) noexcept
+bool MainWindow::createOpenGLWindow(int width, int height) noexcept
 {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
@@ -107,7 +106,7 @@ bool MainWindow::createOpenGLWindow(const char* title, int width, int height) no
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 #endif
 
-    if (m_glfwWindow = glfwCreateWindow(width, height, title, nullptr, nullptr))
+    if (m_glfwWindow = glfwCreateWindow(width, height, "OpenGL Api", nullptr, nullptr))
     {
         glfwMakeContextCurrent(m_glfwWindow);
         glfwSwapInterval(1);
@@ -127,11 +126,11 @@ bool MainWindow::createOpenGLWindow(const char* title, int width, int height) no
 }
 
 
-bool MainWindow::createVulkanWindow(const char* title, int width, int height) noexcept
+bool MainWindow::createVulkanWindow(int width, int height) noexcept
 {
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
-    if (m_glfwWindow = glfwCreateWindow(width, height, title, nullptr, nullptr); !m_glfwWindow)
+    if (m_glfwWindow = glfwCreateWindow(width, height, "Vulkan Api", nullptr, nullptr); !m_glfwWindow)
         return false;
 
     uint64_t windowHandle = 0;
@@ -158,9 +157,9 @@ void MainWindow::initCallbacks() noexcept
 {
     glfwSetFramebufferSizeCallback(m_glfwWindow, [](GLFWwindow* window, int width, int height) -> void
     {
-        if (auto api = static_cast<VulkanApi*>(glfwGetWindowUserPointer(window)))
+        if (auto* wnd = static_cast<MainWindow*>(glfwGetWindowUserPointer(window)))
         {
-            api->resize(width, height);
+            wnd->m_graphicsApi->resize(width, height);
         }
     });
 
@@ -172,7 +171,7 @@ void MainWindow::initCallbacks() noexcept
 
     glfwSetCursorPosCallback(m_glfwWindow, [](GLFWwindow* window, double xposIn, double yposIn) -> void
     {
-        if (auto api = static_cast<VulkanApi*>(glfwGetWindowUserPointer(window)))
+        if (auto* wnd = static_cast<MainWindow*>(glfwGetWindowUserPointer(window)))
         {
             float xpos = (float)xposIn;
             float ypos = (float)yposIn;
@@ -183,7 +182,7 @@ void MainWindow::initCallbacks() noexcept
             lastX = xpos;
             lastY = ypos;
 
-            api->processMouseMovement(xoffset, yoffset);
+            wnd->m_camera.processMouseMovement(xoffset, yoffset);
         }
     });
 }

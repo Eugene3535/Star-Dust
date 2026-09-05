@@ -13,14 +13,10 @@ public:
     OpenGLApi(Camera& camera) noexcept;
     ~OpenGLApi();
 
-    bool createContext() noexcept;
+    bool createContext()                   noexcept;
     bool createView(uint64_t windowHandle) noexcept;
-    void drawFrame() const noexcept;
-
-    void processMouseMovement(float xpos, float ypos) noexcept;
-    void processKeyboard(Camera::Direction direction, float deltaTime) noexcept;
-
-    void resize(int width, int height) noexcept;
+    void drawFrame()                 const noexcept;
+    void resize(int width, int height)     noexcept;
 
 private:
     void initializeDebug() noexcept;

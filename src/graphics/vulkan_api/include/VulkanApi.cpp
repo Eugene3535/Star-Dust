@@ -56,24 +56,6 @@ void VulkanApi::drawFrame() const noexcept
 }
 
 
-void VulkanApi::processMouseMovement(float xpos, float ypos) noexcept
-{
-    if (m_engine)
-    {
-        m_camera.processMouseMovement(xpos, ypos);
-    }
-}
-
-
-void VulkanApi::processKeyboard(Camera::Direction direction, float deltaTime) noexcept
-{
-    if (m_engine)
-    {
-        m_camera.processKeyboard(direction, deltaTime);
-    }
-}
-
-
 void VulkanApi::resize(int width, int height) noexcept
 {
     if (m_engine)

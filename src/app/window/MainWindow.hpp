@@ -2,8 +2,7 @@
 
 #include <memory>
 
-#include "VulkanApi.hpp"
-
+#include "camera/Camera.hpp"
 
 class MainWindow
 {
@@ -15,8 +14,8 @@ public:
     int run() noexcept;
 
 private:
-    bool createOpenGLWindow(const char* title, int width, int height) noexcept;
-    bool createVulkanWindow(const char* title, int width, int height) noexcept;
+    bool createOpenGLWindow(int width, int height) noexcept;
+    bool createVulkanWindow(int width, int height) noexcept;
     void initCallbacks() noexcept;
 
     struct GLFWwindow* m_glfwWindow;

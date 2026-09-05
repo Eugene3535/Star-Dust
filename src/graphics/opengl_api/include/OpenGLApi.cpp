@@ -210,18 +210,6 @@ void OpenGLApi::drawFrame() const noexcept
 }
 
 
-void OpenGLApi::processMouseMovement(float xpos, float ypos) noexcept
-{
-    m_camera.processMouseMovement(xpos, ypos);
-}
-
-
-void OpenGLApi::processKeyboard(Camera::Direction direction, float deltaTime) noexcept
-{
-    m_camera.processKeyboard(direction, deltaTime);
-}
-
-
 void OpenGLApi::resize(int width, int height) noexcept
 {
     glViewport(0, 0, width,  height);

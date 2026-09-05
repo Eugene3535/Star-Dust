@@ -13,14 +13,10 @@ public:
     VulkanApi(Camera& camera) noexcept;
     ~VulkanApi();
 
-    bool createContext() noexcept override;
+    bool createContext()                   noexcept override;
     bool createView(uint64_t windowHandle) noexcept override;
-    void drawFrame() const noexcept override;
-
-    void resize(int width, int height) noexcept override;
-
-    void processMouseMovement(float xpos, float ypos) noexcept override;
-    void processKeyboard(Camera::Direction direction, float deltaTime) noexcept override;
+    void drawFrame()                 const noexcept override;
+    void resize(int width, int height)     noexcept override;
 
 private:
     std::unique_ptr<class Engine> m_engine;
