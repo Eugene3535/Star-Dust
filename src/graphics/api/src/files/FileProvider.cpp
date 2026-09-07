@@ -80,9 +80,9 @@ std::filesystem::path FileProvider::findPathToFile(const std::string& filename) 
 {
     if (s_instance)
     {
-        std::filesystem::path resFolder = s_instance->m_exeDir / "res";
+        const std::filesystem::path resFolder = s_instance->m_exeDir / "res";
 
-        if(std::filesystem::exists(resFolder))
+        if (std::filesystem::exists(resFolder))
         {
             for (const auto& file : std::filesystem::recursive_directory_iterator(resFolder))
                 if (file.path().filename() == filename)    
